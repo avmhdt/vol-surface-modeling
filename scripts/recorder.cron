@@ -1,5 +1,7 @@
 # vsm-recorder: hourly Deribit snapshots at hh:15 UTC, run from the deploy clone.
-# Installed by scripts/deploy_recorder.sh, which keeps other crontab lines. Cron uses the
-# host's time zone, so minute-only schedules are safe; the host must stay on a whole-hour
-# offset. flock stops a run overlapping a long ticker sweep.
+# Installed by scripts/deploy_recorder.sh, which keeps other crontab lines and replaces only
+# its own tagged lines. Cron uses the host's time zone, so the hourly line is safe on any
+# whole-hour offset. flock stops a run overlapping a long ticker sweep.
 15 * * * * cd "$HOME/deploy/vol-surface-modeling" && VSM_LOG_JSON=true flock -n "$HOME/deploy/vsm-recorder.lock" .venv/bin/vsm record >> "$HOME/data/vol-surface-modeling/logs/cron.log" 2>&1 # vsm-recorder
+# vsm-recorder: daily append of history and expired instruments, on its own lock.
+40 9 * * * cd "$HOME/deploy/vol-surface-modeling" && VSM_LOG_JSON=true flock -n "$HOME/deploy/vsm-history.lock" sh -c '.venv/bin/vsm ingest deribit-history && .venv/bin/vsm ingest instruments --expired' >> "$HOME/data/vol-surface-modeling/logs/cron.log" 2>&1 # vsm-recorder

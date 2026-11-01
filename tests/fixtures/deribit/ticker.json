@@ -1,0 +1,13 @@
+{
+ "timestamp": 1793567091358,
+ "greeks": {
+  "delta": -0.80763,
+  "gamma": 5e-05,
+  "vega": 37.77705
+ },
+ "instrument_name": "BTC-13NOV26-83000-P",
+ "best_ask_amount": 9.1,
+ "best_bid_amount": 9.0,
+ "bid_iv": 34.9,
+ "ask_iv": 42.2
+}

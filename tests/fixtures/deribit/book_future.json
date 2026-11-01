@@ -1,0 +1,42 @@
+[
+ {
+  "high": 78166.0,
+  "low": 77324.0,
+  "last": 77846.0,
+  "instrument_name": "BTC-PERPETUAL",
+  "bid_price": 77845.5,
+  "ask_price": 77846.0,
+  "open_interest": 666042700,
+  "mark_price": 77846.31,
+  "creation_timestamp": 1793566885006,
+  "current_funding": 0.0,
+  "estimated_delivery_price": 77831.12,
+  "funding_8h": 1.39e-05,
+  "price_change": 0.5165,
+  "volume": 10483.05973905,
+  "base_currency": "BTC",
+  "quote_currency": "USD",
+  "volume_usd": 815475470.0,
+  "volume_notional": 815475470.0,
+  "mid_price": 77845.75
+ },
+ {
+  "high": 79195.0,
+  "low": 78402.5,
+  "last": 78872.5,
+  "instrument_name": "BTC-29JAN27",
+  "bid_price": 78897.5,
+  "ask_price": 78900.0,
+  "open_interest": 2945030,
+  "mark_price": 78895.7,
+  "creation_timestamp": 1793566885005,
+  "estimated_delivery_price": 77831.12,
+  "price_change": 0.5995,
+  "volume": 6.38744958,
+  "base_currency": "BTC",
+  "quote_currency": "USD",
+  "volume_usd": 503200.0,
+  "volume_notional": 503200.0,
+  "mid_price": 78898.75
+ }
+]

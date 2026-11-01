@@ -8,8 +8,10 @@ from typing import Annotated
 import typer
 
 from vsm.config import AppConfig, load_config
+from vsm.conventions import datetime_to_ns
 from vsm.io import recorder
 from vsm.io.deribit import DeribitClient
+from vsm.io.history import ingest_history
 from vsm.io.smoke import run_smoke
 from vsm.logs import configure_logging
 from vsm.settings import Settings
@@ -141,7 +143,7 @@ def ingest_instruments(
     settings = Settings()
     config = load_config()
     configure_logging(settings.log_level, as_json=settings.log_json)
-    seen_ns = recorder.datetime_to_ns(datetime.now(UTC))
+    seen_ns = datetime_to_ns(datetime.now(UTC))
     with _client(settings, config) as client:
         for underlying in _split(currency):
             table = recorder.refresh_instruments(
@@ -153,6 +155,30 @@ def ingest_instruments(
                 expired=expired,
             )
             typer.echo(f"{underlying}: {table.height} instruments stored")
+
+
+@ingest_app.command("deribit-history")
+def ingest_deribit_history(
+    what: Annotated[str, typer.Option("--what")] = "dvol,perp,funding,delivery",
+    currency: CurrencyOption = "BTC,ETH",
+    start: Annotated[str | None, typer.Option("--start", help="Default: resume.")] = None,
+    end: Annotated[str | None, typer.Option("--end", help="Default: now.")] = None,
+) -> None:
+    """DVOL, perpetual OHLC, funding and delivery prices: backfill, then daily append."""
+    settings = Settings()
+    config = load_config()
+    configure_logging(settings.log_level, as_json=settings.log_json)
+    with _client(settings, config) as client:
+        counts = ingest_history(
+            client,
+            settings.data_dir,
+            what=_split(what),
+            currencies=_split(currency),
+            start=date.fromisoformat(start) if start else None,
+            end=date.fromisoformat(end) if end else None,
+        )
+    for series, rows in counts.items():
+        typer.echo(f"{series}: {rows} rows")
 
 
 if __name__ == "__main__":

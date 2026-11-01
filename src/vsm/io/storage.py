@@ -94,6 +94,42 @@ INSTRUMENTS_SCHEMA: dict[str, pl.DataType | type[pl.DataType]] = {
     "last_seen_ns": pl.Int64,
 }
 
+PERP_OHLC_SCHEMA: dict[str, pl.DataType | type[pl.DataType]] = {
+    "ts": pl.Int64,
+    "venue": pl.String,
+    "symbol": pl.String,
+    "resolution_s": pl.Int32,
+    "open": pl.Float64,
+    "high": pl.Float64,
+    "low": pl.Float64,
+    "close": pl.Float64,
+    "volume": pl.Float64,
+}
+
+DVOL_SCHEMA: dict[str, pl.DataType | type[pl.DataType]] = {
+    "ts": pl.Int64,
+    "underlying": pl.String,
+    "open": pl.Float64,
+    "high": pl.Float64,
+    "low": pl.Float64,
+    "close": pl.Float64,
+}
+
+FUNDING_SCHEMA: dict[str, pl.DataType | type[pl.DataType]] = {
+    "ts": pl.Int64,
+    "symbol": pl.String,
+    "interest_1h": pl.Float64,
+    "interest_8h": pl.Float64,
+    "index_px": pl.Float64,
+    "prev_index_px": pl.Float64,
+}
+
+DELIVERY_SCHEMA: dict[str, pl.DataType | type[pl.DataType]] = {
+    "date": pl.Date,
+    "index_name": pl.String,
+    "delivery_price": pl.Float64,
+}
+
 
 def raw_dir(data_dir: Path) -> Path:
     """Root of the irreplaceable Deribit history."""

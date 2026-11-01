@@ -10,7 +10,8 @@ from tenacity import (
     Retrying,
     retry_if_exception_type,
     stop_after_attempt,
-    wait_exponential_jitter,
+    wait_exponential,
+    wait_random,
 )
 
 TOO_MANY_REQUESTS = 10028
@@ -93,7 +94,7 @@ class DeribitClient:
         query = {k: _encode(v) for k, v in params.items() if v is not None}
         retrying = Retrying(
             stop=stop_after_attempt(self._attempts),
-            wait=wait_exponential_jitter(initial=0.5, max=30.0),
+            wait=wait_exponential(multiplier=0.5, max=30.0) + wait_random(0.0, 1.0),
             retry=retry_if_exception_type(_Transient),
             before_sleep=self._count_retry,
             sleep=self._sleep,

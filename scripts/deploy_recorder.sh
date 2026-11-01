@@ -24,6 +24,6 @@ git -C "$deploy" checkout --quiet --detach "$ref"
 (cd "$deploy" && uv sync --quiet --frozen --no-dev --python 3.12)
 "$deploy/.venv/bin/vsm" --help > /dev/null
 
-{ crontab -l 2>/dev/null | grep -v 'vsm-recorder' || true; cat "$deploy/scripts/recorder.cron"; } | crontab -
+{ crontab -l 2>/dev/null | grep -v 'vsm-recorder' || true; grep 'vsm-recorder' "$deploy/scripts/recorder.cron"; } | crontab -
 echo "deployed $(git -C "$deploy" rev-parse --short HEAD)"
 crontab -l | grep 'vsm-recorder'

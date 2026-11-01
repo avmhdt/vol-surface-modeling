@@ -2,7 +2,7 @@
 
 > Turn noisy option quotes into an arbitrage-free surface, calibrate models to it, and study what implied vol pays.
 
-**Status:** planning
+**Status:** in progress. Hourly Deribit recorder live since 2026-11-01 21:15 UTC.
 
 | | |
 |---|---|
