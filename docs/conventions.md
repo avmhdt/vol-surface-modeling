@@ -1,6 +1,6 @@
 # Conventions
 
-Draft from M1; normative for every module. All conversions live in `vsm.conventions`, and raw tables keep venue units (DQ-10).
+Normative for every module. All conversions live in `vsm.conventions`, and raw tables keep venue units (DQ-10).
 
 ## Instruments
 
@@ -13,6 +13,7 @@ Draft from M1; normative for every module. All conversions live in `vsm.conventi
 - Expiry is 08:00 UTC on the expiry date. It comes from `expiration_timestamp`, and the symbol is only a check (DQ-11).
 - Time to expiry: T = (expiry_ns − as_of_ns) / (365 × 86,400 × 10⁹) years, ACT/365 in seconds.
 - Perpetuals report a far-future `expiration_timestamp`. They are stored with a null `expiry_ns`.
+- A recorder snapshot's as-of time is its latest `ts_recv`, seconds after the nominal hh:15. That keeps every row at or before the as-of time (DQ-01).
 
 ## Pricing
 
@@ -23,6 +24,8 @@ Draft from M1; normative for every module. All conversions live in `vsm.conventi
 
 - Per expiry from put–call parity on coin premiums: `C_coin − P_coin = DF_coin × (1 − K/F)`, a line in K with intercept α = DF_coin and slope β = −DF_coin/F, so F = −α/β.
 - Cross-checked against the dated future of the same expiry and Deribit's `underlying_price`.
+- The regression reports α as `df`. Under `coin_rate: zero`, prices convert with DF = 1 and `df` is only reported.
+- Short expiries are not fitted, so they take the future or `underlying_price` instead of the regression.
 - Annualized basis b = ln(F/S)/T against the spot index is reported, never used as an input.
 
 ## Moneyness and variance

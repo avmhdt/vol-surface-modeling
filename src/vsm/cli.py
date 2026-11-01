@@ -1,19 +1,21 @@
 """The ``vsm`` command line."""
 
 import json
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Annotated
 
 import typer
 
-from vsm.config import AppConfig, load_config
+from vsm.config import AppConfig, config_hash, load_config
 from vsm.conventions import datetime_to_ns
+from vsm.explog import append_run
 from vsm.io import recorder
 from vsm.io.deribit import DeribitClient
 from vsm.io.history import ingest_history
 from vsm.io.smoke import run_smoke
 from vsm.logs import configure_logging
+from vsm.pipeline import forward_gap_metrics, run_day
 from vsm.settings import Settings
 
 app = typer.Typer(add_completion=False, no_args_is_help=True, help="Volatility surface pipeline.")
@@ -132,6 +134,58 @@ def status(
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     typer.echo(json.dumps(report, indent=2, sort_keys=True))
+
+
+BUILD_STEPS = {"clean", "forwards", "iv"}
+
+
+@app.command()
+def build(
+    underlying: Annotated[str, typer.Option("--underlying")],
+    start: Annotated[str, typer.Option("--start", help="YYYY-MM-DD")],
+    end: Annotated[str, typer.Option("--end", help="YYYY-MM-DD")],
+    steps: Annotated[str, typer.Option("--steps")] = "clean,forwards,iv",
+    at: Annotated[str | None, typer.Option("--at", help="HH:MM UTC, default canonical.")] = None,
+    config_path: ConfigOption = None,
+) -> None:
+    """Build every as-of date in a range. A date with no snapshot is logged and skipped."""
+    settings = Settings()
+    config = load_config(config_path)
+    configure_logging(settings.log_level, as_json=settings.log_json)
+    unknown = set(_split(steps)) - BUILD_STEPS
+    if unknown:
+        typer.echo(f"steps not available yet: {sorted(unknown)}")
+        raise typer.Exit(code=2)
+    first = date.fromisoformat(start)
+    last = date.fromisoformat(end)
+    built = 0
+    for offset in range((last - first).days + 1):
+        day = first + timedelta(days=offset)
+        report = run_day(settings.data_dir, config, underlying, day, at_utc=at)
+        if report is None:
+            typer.echo(f"{day}: no snapshot")
+            continue
+        built += 1
+        check = report["mark_iv_check"]
+        typer.echo(
+            f"{day}: {report['snapshot']} rows={report['rows']} kept={report['kept']} "
+            f"liquid={report['liquid']} forwards={report['forward_methods']} "
+            f"mark_iv_median={check['median_abs_diff_vol_pts']}"
+        )
+    metrics = forward_gap_metrics(settings.data_dir, config, underlying)
+    typer.echo(f"forward gap: {metrics}")
+    append_run(
+        config.results_dir(),
+        "build",
+        config_hash(config),
+        underlying=underlying,
+        start=start,
+        end=end,
+        params={"steps": _split(steps), "at": at},
+        metrics={"days_built": built, "forward_gap": metrics},
+    )
+    if built == 0:
+        raise typer.Exit(code=1)
 
 
 @ingest_app.command("instruments")
