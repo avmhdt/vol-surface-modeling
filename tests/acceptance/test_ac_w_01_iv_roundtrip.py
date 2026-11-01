@@ -1,10 +1,11 @@
 """AC-W-01: price -> vol -> price to 1e-10 across moneyness, deep wings included.
 
-One part of the criterion cannot hold in double precision. An ITM price is intrinsic plus a
-much smaller time value, so the time value is known only to about one ulp of the whole price.
-Where vega is tiny, that ulp alone moves vol by more than 1e-10, and no solver can recover
-what the input no longer holds. ``test_literal_vol_round_trip_on_itm_points`` keeps the literal
-criterion visible as a strict xfail, and the threshold stays unchanged until the owner rules.
+The owner amended the vol round-trip on 2026-11-01. An ITM price is intrinsic plus a much
+smaller time value, so the time value is known only to about one ulp of the whole price. Where
+vega is tiny, that ulp alone moves vol by more than 1e-10, and no solver can recover what the
+input no longer holds. ITM points now count only where 2 ulp(p) / vega <= 1e-10.
+``test_literal_vol_round_trip_on_itm_points`` keeps the original wording visible as a strict
+xfail, so the shortfall cannot disappear unnoticed.
 """
 
 import numpy as np
@@ -102,7 +103,7 @@ def test_same_itm_points_round_trip_from_the_otm_price(points: dict[str, np.ndar
 
 @pytest.mark.xfail(
     strict=True,
-    reason="Double rounding of the ITM input; needs an owner ruling, see docs/decisions.md",
+    reason="Original wording: double rounding of the ITM input; amended, see docs/decisions.md",
 )
 def test_literal_vol_round_trip_on_itm_points(points: dict[str, np.ndarray]) -> None:
     inside = ~points["otm"] & (points["vega"] / FORWARD >= MIN_VEGA)

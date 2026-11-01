@@ -25,4 +25,4 @@ Both terms share the factor exp(−(h² + t²)/2), so in the tail b is computed 
 
 ### Limit on ITM vols
 
-An ITM price is intrinsic plus time value, so the time value is known only to about one ulp of the whole price. Where vega is tiny, that ulp moves vol by more than the 1e-10 target, and no solver can recover it. From the OTM price at the same point the vol round-trips to 1.8e-15. This is why the pipeline fits OTM quotes, and why `docs/decisions.md` carries an open item on AC-W-01.
+An ITM price is intrinsic plus time value, so the time value is known only to about one ulp of the whole price. Where vega is tiny, that ulp moves vol by more than the 1e-10 target, and no solver can recover it. From the OTM price at the same point the vol round-trips to 1.8e-15. This is why the pipeline fits OTM quotes, and why the owner amended AC-W-01 to require the ITM vol round-trip only where the input price can resolve it (`docs/decisions.md`).
