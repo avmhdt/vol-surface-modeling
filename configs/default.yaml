@@ -1,0 +1,83 @@
+# Crypto pipeline config. Sections are read by the milestone that uses them.
+version: 1
+underlyings: [BTC, ETH]
+venue: deribit
+paths: {results_dir: ./results, reports_dir: ./reports}   # data dir from VSM_DATA_DIR
+recorder:
+  currencies: [BTC, ETH]
+  kinds: [option, future]
+  minute_utc: 15                 # runs at hh:15 UTC
+  canonical_time_utc: "08:15"
+  ticker_sweep: daily            # none | daily | hourly
+  # Deribit: public requests are limited per IP. get_instruments has its own pool
+  # (10,000 credits per call, 1 request/s sustained, burst 50).
+  # Source: https://docs.deribit.com/articles/rate-limits, retrieved 2026-11-01.
+  max_requests_per_second: 5     # stay well inside Deribit credit limits
+  retries: 5
+conventions:
+  year_seconds: 31536000         # 365 * 86400
+  coin_rate: zero                # zero | implied   (D-04)
+cleaning:
+  staleness_s: 120
+  min_days_to_expiry: 2
+  min_bid_ticks: 1
+  max_iv_spread: 0.10
+  max_rel_spread: 1.0
+  min_strikes_per_slice: 5
+forwards:
+  method: parity_wls             # fallback: future -> deribit_underlying
+  k_window: 0.20
+  min_pairs: 3
+  huber_c: 1.345
+  max_futures_gap_bps: 25
+iv:
+  solver: householder_brent      # householder_brent | lbr
+  max_iter: 50
+  target: mid                    # mid | microprice
+liquid: {min_abs_delta: 0.05, max_abs_delta: 0.95, max_iv_spread: 0.10, min_days_to_expiry: 2}
+svi:
+  init: quasi_explicit           # quasi_explicit | ssvi_slice
+  weights: inverse_spread        # inverse_spread | vega | uniform
+  lee_bound: true
+ssvi:
+  phi: power_law                 # power_law | heston_like
+stability:
+  lambda: null                   # chosen on first 14 days, then frozen (logged)
+  selection_days: 14
+arbitrage:
+  grid_z: {min: -6.0, max: 6.0, n: 1201}
+  tol_g: 1.0e-12
+  tol_calendar: 1.0e-12
+  tol_density_mass: 1.0e-3
+  fallback: [constrained_refit, ssvi_slice, drop]
+heston:
+  pricer: cos                    # cos | fft
+  cos_terms: 160
+  cos_truncation_L: 12
+  optimizer: lm                  # lm | trf
+  init: {v0: 0.36, kappa: 2.0, theta: 0.36, xi: 1.0, rho: -0.2}
+  bounds: {v0: [1.0e-4, 4.0], kappa: [1.0e-3, 50.0], theta: [1.0e-4, 4.0], xi: [1.0e-3, 10.0], rho: [-0.999, 0.999]}
+sabr: {beta: 1.0, obloj_correction: false}
+localvol:
+  k_grid: {min: -1.5, max: 1.5, n: 121}
+  t_grid_days: [2, 7, 14, 30, 60, 90, 180, 365]
+mc: {paths: 200000, steps_per_day: 24, antithetic: true, seed: 20261030}
+barrier:
+  tenor_days: 30
+  products:
+    - {type: down_and_out_call, strike_pct: 1.00, barrier_pct: 0.85}
+    - {type: up_and_out_call,   strike_pct: 1.00, barrier_pct: 1.20}
+vrp: {tenor_days: 30, rv_bar_s: 3600, hac_lags: auto}
+straddle:
+  source: tardis_monthly         # tardis_monthly | recorder_daily | tardis_daily
+  entry_time_utc: "08:15"
+  target_days: 30
+  min_days: 20
+  max_days: 45
+  side: short
+  hedge: {instrument: perpetual, rebalance: daily, delta: entry_iv}
+  costs: {fee_table: configs/fees/deribit.yaml, option_fill: bid_ask, hedge_slippage_bps: 2.0}
+  bootstrap: {n: 10000, method: stationary, mean_block: 3, seed: 7}
+tardis: {keep_raw: false, window_utc: ["07:45", "08:20"]}
+viewer: {max_dates: 120, quote_dates: []}
+export: {schema: vsm.surface.v1, canonical: ssvi}
