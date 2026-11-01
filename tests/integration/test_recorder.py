@@ -143,6 +143,29 @@ def test_failed_currency_logs_gap_and_others_still_run(
     assert all("503" in g["reason"] or "DeribitError" in g["reason"] for g in gaps)
 
 
+def test_restart_mid_write_is_logged_and_the_next_run_resumes(
+    make_client: Factory, tmp_path: Path
+) -> None:
+    record(make_client(), tmp_path)
+    lost = storage.snapshot_path(
+        tmp_path, storage.OPTION_QUOTES, "BTC", "2026-11-02", "deribit-BTC-20261102T1015Z"
+    )
+    lost.parent.mkdir(parents=True, exist_ok=True)
+    lost.with_name(f".{lost.name}.4242.tmp").write_bytes(b"partial")
+
+    summary = record(make_client(), tmp_path, now=SLOT_TIME + timedelta(hours=2))
+
+    assert summary.ok
+    assert recorder.captured_labels(tmp_path, storage.OPTION_QUOTES, "BTC") == {
+        "20261102T0915Z",
+        "20261102T1115Z",
+    }
+    assert quotes(tmp_path, storage.OPTION_QUOTES, "BTC")["snapshot_id"].n_unique() == 2
+    gaps = recorder.read_gaps(tmp_path)
+    assert {g["slot_utc"] for g in gaps} == {"20261102T1015Z"}
+    assert {g["reason"] for g in gaps} == {"not_captured"}
+
+
 def test_missing_scheduled_slots_are_logged_once(make_client: Factory, tmp_path: Path) -> None:
     record(make_client(), tmp_path)
     later = SLOT_TIME + timedelta(hours=3)
