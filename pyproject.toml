@@ -1,0 +1,97 @@
+[project]
+name = "vol-surface-modeling"
+version = "0.1.0"
+description = "Arbitrage-free BTC and ETH volatility surfaces from Deribit option quotes, model calibration and a variance risk premium study."
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = [
+    "numpy>=2.1",
+    "scipy>=1.14",
+    "numba>=0.61",
+    "polars>=1.12",
+    "duckdb>=1.1",
+    "pyarrow>=18",
+    "httpx>=0.27",
+    "tenacity>=9.0",
+    "typer>=0.12",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "pyyaml>=6.0",
+    "statsmodels>=0.14",
+    "jsonschema>=4.23",
+    "matplotlib>=3.9",
+    "plotly>=5.24",
+    "structlog>=24.4",
+]
+
+[project.optional-dependencies]
+jax = ["jax[cpu]>=0.4.35"]
+wrds = ["wrds>=3.2"]
+yahoo = ["yfinance>=0.2.50"]
+
+[project.scripts]
+vsm = "vsm.cli:app"
+
+[dependency-groups]
+dev = [
+    "hypothesis>=2.0",
+    "mypy>=1.13",
+    "pre-commit>=4.0",
+    "py-vollib>=1.0.1",
+    "pytest>=8.3",
+    "pytest-benchmark>=5.0",
+    "pytest-cov>=6.0",
+    "ruff>=0.8",
+    "types-pyyaml>=6.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/vsm"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "NPY", "PD", "RUF", "SIM"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["typer.Option", "typer.Argument"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src"]
+mypy_path = "src"
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["numba.*", "py_vollib.*", "wrds.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "data: needs real local data under VSM_DATA_DIR; run locally, never in CI",
+    "live: hits the Deribit public API; nightly workflow only",
+    "bench: benchmark; writes results/bench",
+]
+
+[tool.coverage.run]
+source = ["src/vsm"]
+branch = false
+
+[tool.coverage.report]
+fail_under = 85
+show_missing = true
+skip_covered = true
+exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError"]

@@ -40,3 +40,13 @@ Thumbs.db
 
 # Local build spec (kept out of the public repo)
 SPEC.html
+
+# Numba JIT cache and local overrides (D-09)
+.numba_cache/
+.env.local
+
+# Coverage
+.coverage
+.coverage.*
+coverage.xml
+.benchmarks/
