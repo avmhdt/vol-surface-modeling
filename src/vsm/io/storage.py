@@ -94,6 +94,22 @@ INSTRUMENTS_SCHEMA: dict[str, pl.DataType | type[pl.DataType]] = {
     "last_seen_ns": pl.Int64,
 }
 
+FORWARDS_SCHEMA: dict[str, pl.DataType | type[pl.DataType]] = {
+    "as_of_ns": pl.Int64,
+    "underlying": pl.String,
+    "expiry_ns": pl.Int64,
+    "t": pl.Float64,
+    "forward": pl.Float64,
+    "forward_se": pl.Float64,
+    "df": pl.Float64,
+    "method": pl.String,
+    "n_pairs": pl.Int32,
+    "future_px": pl.Float64,
+    "gap_bps": pl.Float64,
+    "spot_index": pl.Float64,
+    "basis_ann": pl.Float64,
+}
+
 PERP_OHLC_SCHEMA: dict[str, pl.DataType | type[pl.DataType]] = {
     "ts": pl.Int64,
     "venue": pl.String,

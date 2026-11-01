@@ -421,7 +421,8 @@ def captured_labels(data_dir: Path, dataset: str, underlying: str) -> set[str]:
     return {path.stem.rsplit("-", 1)[1] for path in files}
 
 
-def _label_time(label: str) -> datetime:
+def label_time(label: str) -> datetime:
+    """``YYYYMMDDTHHMMZ`` to an aware datetime."""
     return datetime.strptime(label, LABEL_FORMAT).replace(tzinfo=UTC)
 
 
@@ -442,10 +443,10 @@ def find_gaps(
 ) -> list[str]:
     """Scheduled slots since the first capture, before ``until``, with no snapshot file."""
     captured = captured_labels(data_dir, dataset, underlying)
-    on_schedule = sorted(c for c in captured if _label_time(c).minute == minute_utc)
+    on_schedule = sorted(c for c in captured if label_time(c).minute == minute_utc)
     if not on_schedule:
         return []
-    slots = scheduled_slots(_label_time(on_schedule[0]), until, minute_utc)
+    slots = scheduled_slots(label_time(on_schedule[0]), until, minute_utc)
     return [s.strftime(LABEL_FORMAT) for s in slots if s.strftime(LABEL_FORMAT) not in captured]
 
 
@@ -545,7 +546,7 @@ def coverage(
 ) -> dict[str, Any]:
     """Scheduled vs captured snapshots of one underlying (AC-W-04)."""
     captured = sorted(captured_labels(data_dir, storage.OPTION_QUOTES, underlying))
-    times = [_label_time(label) for label in captured]
+    times = [label_time(label) for label in captured]
     if not times:
         return {"underlying": underlying, "first_snapshot": None, "captured": 0}
     start = times[0]
@@ -595,7 +596,7 @@ def consecutive_hourly(data_dir: Path, underlying: str, minute_utc: int) -> int:
     on_schedule = sorted(
         (
             t
-            for t in map(_label_time, captured_labels(data_dir, storage.OPTION_QUOTES, underlying))
+            for t in map(label_time, captured_labels(data_dir, storage.OPTION_QUOTES, underlying))
             if t.minute == minute_utc
         ),
         reverse=True,

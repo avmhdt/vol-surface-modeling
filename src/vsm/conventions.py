@@ -2,8 +2,14 @@
 
 from datetime import UTC, date, datetime
 
+import numpy as np
+from numpy.typing import NDArray
+
+F64 = NDArray[np.float64]
+
 NS_PER_MS = 1_000_000
 NS_PER_S = 1_000_000_000
+YEAR_SECONDS = 31_536_000  # ACT/365 in seconds
 
 EXPIRY_HOUR_UTC = 8
 
@@ -21,6 +27,29 @@ _MONTHS = {
     "NOV": 11,
     "DEC": 12,
 }
+
+
+def year_fraction(
+    expiry_ns: NDArray[np.int64], as_of_ns: int, year_seconds: int = YEAR_SECONDS
+) -> F64:
+    """Years to expiry, ACT/365 in seconds."""
+    remaining_ns = np.asarray(expiry_ns, dtype=np.int64) - np.int64(as_of_ns)
+    return remaining_ns / (year_seconds * NS_PER_S)
+
+
+def inverse_to_forward_usd(premium_coin: F64, forward: F64, df_coin: F64 | float = 1.0) -> F64:
+    """Inverse premium in coin to undiscounted USD per coin: premium * F / DF_coin."""
+    return np.asarray(premium_coin, dtype=np.float64) * forward / df_coin
+
+
+def percent_to_decimal(vol_pct: F64) -> F64:
+    """Venue percent vol to decimal vol."""
+    return np.asarray(vol_pct, dtype=np.float64) / 100.0
+
+
+def log_moneyness(strike: F64, forward: F64) -> F64:
+    """k = ln(K/F)."""
+    return np.log(np.asarray(strike, dtype=np.float64) / forward)
 
 
 def ms_to_ns(ms: int) -> int:

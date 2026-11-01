@@ -36,6 +36,61 @@ class RecorderConfig(BaseModel):
     retries: int = Field(default=5, ge=0, le=5)
 
 
+class ConventionsConfig(BaseModel):
+    """Day count and the coin-rate convention (D-04)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    year_seconds: int = 31_536_000
+    coin_rate: Literal["zero", "implied"] = "zero"
+
+
+class CleaningConfig(BaseModel):
+    """Quote filters, DQ-01 to DQ-07."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    staleness_s: int = 120
+    min_days_to_expiry: float = 2.0
+    min_bid_ticks: float = 1.0
+    max_iv_spread: float = 0.10
+    max_rel_spread: float = 1.0
+    min_strikes_per_slice: int = 5
+
+
+class ForwardsConfig(BaseModel):
+    """Put-call parity regression and its fallbacks, FR-08 and DQ-09."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    method: Literal["parity_wls"] = "parity_wls"
+    k_window: float = 0.20
+    min_pairs: int = 3
+    huber_c: float = 1.345
+    max_futures_gap_bps: float = 25.0
+
+
+class IvConfig(BaseModel):
+    """IV solver and the fit target."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    solver: Literal["householder_brent", "lbr"] = "householder_brent"
+    max_iter: int = 50
+    target: Literal["mid", "microprice"] = "mid"
+
+
+class LiquidConfig(BaseModel):
+    """Liquid-quote definition, DQ-08. Frozen before any AC metric is computed."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    min_abs_delta: float = 0.05
+    max_abs_delta: float = 0.95
+    max_iv_spread: float = 0.10
+    min_days_to_expiry: float = 2.0
+
+
 class AppConfig(BaseModel):
     """Top-level config. Sections no milestone has typed yet pass through unchanged."""
 
@@ -46,6 +101,11 @@ class AppConfig(BaseModel):
     venue: str = "deribit"
     paths: PathsConfig = PathsConfig()
     recorder: RecorderConfig = RecorderConfig()
+    conventions: ConventionsConfig = ConventionsConfig()
+    cleaning: CleaningConfig = CleaningConfig()
+    forwards: ForwardsConfig = ForwardsConfig()
+    iv: IvConfig = IvConfig()
+    liquid: LiquidConfig = LiquidConfig()
 
     def results_dir(self) -> Path:
         """Absolute results directory."""

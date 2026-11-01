@@ -1,0 +1,36 @@
+{
+  "as_of": "2026-11-01T22:33Z",
+  "fs_used_pct": 1.9,
+  "gaps_logged": 0,
+  "raw_mb": 8.96,
+  "underlyings": {
+    "BTC": {
+      "calendar_days": 0,
+      "canonical_days": 0,
+      "canonical_frac": null,
+      "captured": 2,
+      "consecutive_hourly": 2,
+      "first_snapshot": "20261101T2115Z",
+      "hourly_captured": 2,
+      "hourly_frac_on_up_days": 1.0,
+      "hourly_scheduled": 2,
+      "hourly_scheduled_on_up_days": 2,
+      "last_snapshot": "20261101T2215Z",
+      "underlying": "BTC"
+    },
+    "ETH": {
+      "calendar_days": 0,
+      "canonical_days": 0,
+      "canonical_frac": null,
+      "captured": 2,
+      "consecutive_hourly": 2,
+      "first_snapshot": "20261101T2115Z",
+      "hourly_captured": 2,
+      "hourly_frac_on_up_days": 1.0,
+      "hourly_scheduled": 2,
+      "hourly_scheduled_on_up_days": 2,
+      "last_snapshot": "20261101T2215Z",
+      "underlying": "ETH"
+    }
+  }
+}
