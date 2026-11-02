@@ -5,24 +5,28 @@ from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Annotated
 
+import jsonschema
 import typer
 
 from vsm.config import AppConfig, config_hash, load_config
 from vsm.conventions import datetime_to_ns
 from vsm.explog import append_run
+from vsm.export.reader import read_surface_bundle
 from vsm.io import recorder
 from vsm.io.deribit import DeribitClient
 from vsm.io.history import ingest_history
 from vsm.io.smoke import run_smoke
 from vsm.logs import configure_logging
-from vsm.pipeline import forward_gap_metrics, run_day
+from vsm.pipeline import ALL_STEPS, export_day, recheck_day, refresh_outputs, run_day
 from vsm.settings import Settings
 
 app = typer.Typer(add_completion=False, no_args_is_help=True, help="Volatility surface pipeline.")
 ingest_app = typer.Typer(
     no_args_is_help=True, help="Fetch metadata and history into the raw store."
 )
+export_app = typer.Typer(help="Write and validate vsm.surface.v1 bundles.")
 app.add_typer(ingest_app, name="ingest")
+app.add_typer(export_app, name="export")
 
 ConfigOption = Annotated[Path | None, typer.Option("--config", help="YAML config path.")]
 CurrencyOption = Annotated[str, typer.Option("--currency", help="Comma-separated currencies.")]
@@ -136,15 +140,12 @@ def status(
     typer.echo(json.dumps(report, indent=2, sort_keys=True))
 
 
-BUILD_STEPS = {"clean", "forwards", "iv"}
-
-
 @app.command()
 def build(
     underlying: Annotated[str, typer.Option("--underlying")],
     start: Annotated[str, typer.Option("--start", help="YYYY-MM-DD")],
     end: Annotated[str, typer.Option("--end", help="YYYY-MM-DD")],
-    steps: Annotated[str, typer.Option("--steps")] = "clean,forwards,iv",
+    steps: Annotated[str, typer.Option("--steps")] = ",".join(ALL_STEPS),
     at: Annotated[str | None, typer.Option("--at", help="HH:MM UTC, default canonical.")] = None,
     config_path: ConfigOption = None,
 ) -> None:
@@ -152,16 +153,17 @@ def build(
     settings = Settings()
     config = load_config(config_path)
     configure_logging(settings.log_level, as_json=settings.log_json)
-    unknown = set(_split(steps)) - BUILD_STEPS
+    chosen = tuple(_split(steps))
+    unknown = set(chosen) - set(ALL_STEPS)
     if unknown:
-        typer.echo(f"steps not available yet: {sorted(unknown)}")
+        typer.echo(f"unknown steps: {sorted(unknown)}")
         raise typer.Exit(code=2)
     first = date.fromisoformat(start)
     last = date.fromisoformat(end)
     built = 0
     for offset in range((last - first).days + 1):
         day = first + timedelta(days=offset)
-        report = run_day(settings.data_dir, config, underlying, day, at_utc=at)
+        report = run_day(settings.data_dir, config, underlying, day, at_utc=at, steps=chosen)
         if report is None:
             typer.echo(f"{day}: no snapshot")
             continue
@@ -170,10 +172,11 @@ def build(
         typer.echo(
             f"{day}: {report['snapshot']} rows={report['rows']} kept={report['kept']} "
             f"liquid={report['liquid']} forwards={report['forward_methods']} "
-            f"mark_iv_median={check['median_abs_diff_vol_pts']}"
+            f"mark_iv_median={check['median_abs_diff_vol_pts']} "
+            f"surface={report.get('surface')}"
         )
-    metrics = forward_gap_metrics(settings.data_dir, config, underlying)
-    typer.echo(f"forward gap: {metrics}")
+    metrics = refresh_outputs(settings.data_dir, config, underlying)
+    typer.echo(f"metrics: {metrics}")
     append_run(
         config.results_dir(),
         "build",
@@ -182,10 +185,77 @@ def build(
         start=start,
         end=end,
         params={"steps": _split(steps), "at": at},
-        metrics={"days_built": built, "forward_gap": metrics},
+        metrics={"days_built": built, **metrics},
     )
     if built == 0:
         raise typer.Exit(code=1)
+
+
+def _days(start: str, end: str) -> list[date]:
+    first = date.fromisoformat(start)
+    span = (date.fromisoformat(end) - first).days + 1
+    return [first + timedelta(days=offset) for offset in range(span)]
+
+
+@app.command()
+def check(
+    underlying: Annotated[str, typer.Option("--underlying")],
+    start: Annotated[str, typer.Option("--start", help="YYYY-MM-DD")],
+    end: Annotated[str, typer.Option("--end", help="YYYY-MM-DD")],
+    config_path: ConfigOption = None,
+) -> None:
+    """Re-run the arbitrage gate on stored surfaces, without refitting."""
+    settings = Settings()
+    config = load_config(config_path)
+    configure_logging(settings.log_level, as_json=settings.log_json)
+    failures = 0
+    for day in _days(start, end):
+        report = recheck_day(settings.data_dir, config, underlying, day)
+        if report is None:
+            typer.echo(f"{day}: no stored surface")
+            continue
+        failures += not report.passed
+        typer.echo(
+            f"{day}: passed={report.passed} min_g={report.min_g:+.3e} "
+            f"min_calendar_dw={report.min_calendar_dw:+.3e} "
+            f"density_mass_max_err={report.density_mass_max_err:.2e}"
+        )
+    if failures:
+        raise typer.Exit(code=1)
+
+
+@export_app.callback(invoke_without_command=True)
+def export(
+    ctx: typer.Context,
+    underlying: Annotated[str | None, typer.Option("--underlying")] = None,
+    day: Annotated[str | None, typer.Option("--date")] = None,
+    start: Annotated[str | None, typer.Option("--start")] = None,
+    end: Annotated[str | None, typer.Option("--end")] = None,
+) -> None:
+    """Write bundles of stored surfaces for a date or range."""
+    if ctx.invoked_subcommand is not None:
+        return
+    first = day or start
+    if underlying is None or first is None:
+        typer.echo("give --underlying and either --date or --start and --end")
+        raise typer.Exit(code=2)
+    settings = Settings()
+    config = load_config()
+    configure_logging(settings.log_level, as_json=settings.log_json)
+    for current in _days(first, end or first):
+        path = export_day(settings.data_dir, config, underlying, current)
+        typer.echo(f"{current}: {path or 'no stored surface'}")
+
+
+@export_app.command("validate")
+def export_validate(path: Annotated[str, typer.Argument(help="Path to a surface.json.")]) -> None:
+    """Validate one file against the schema and the consumer invariants."""
+    try:
+        bundle = read_surface_bundle(path)
+    except (ValueError, jsonschema.ValidationError) as exc:
+        typer.echo(f"invalid: {exc}")
+        raise typer.Exit(code=1) from exc
+    typer.echo(f"valid: {bundle.document['underlying']} {bundle.document['as_of']}")
 
 
 @ingest_app.command("instruments")

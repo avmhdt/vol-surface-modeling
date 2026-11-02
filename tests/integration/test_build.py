@@ -38,6 +38,7 @@ def write_snapshot(data: Path, label: str = LABEL, *, futures: bool = True) -> N
 def config(tmp_path: Path) -> AppConfig:
     loaded = load_config()
     loaded.paths.results_dir = tmp_path / "results"
+    loaded.paths.reports_dir = tmp_path / "reports"
     return loaded
 
 
@@ -134,8 +135,8 @@ def test_cli_build_fails_with_nothing_to_build(
     assert runner.invoke(cli.app, args).exit_code == 1
 
 
-def test_cli_build_refuses_unbuilt_steps() -> None:
+def test_cli_build_refuses_unknown_steps() -> None:
     args = ["build", "--underlying", "BTC", "--start", "2026-11-01", "--end", "2026-11-01"]
-    result = runner.invoke(cli.app, [*args, "--steps", "clean,fit"])
+    result = runner.invoke(cli.app, [*args, "--steps", "clean,bogus"])
     assert result.exit_code == 2
-    assert "fit" in result.output
+    assert "bogus" in result.output

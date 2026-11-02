@@ -39,8 +39,9 @@ svi:
   init: quasi_explicit           # quasi_explicit | ssvi_slice
   weights: inverse_spread        # inverse_spread | vega | uniform
   lee_bound: true
+  wing_anchor_weight: 1.0e-3     # weight of SSVI pseudo-points outside the quoted range
 ssvi:
-  phi: power_law                 # power_law | heston_like
+  phi: power_law                 # only power_law is built
 stability:
   lambda: null                   # chosen on first 14 days, then frozen (logged)
   selection_days: 14
@@ -49,6 +50,8 @@ arbitrage:
   tol_g: 1.0e-12
   tol_calendar: 1.0e-12
   tol_density_mass: 1.0e-3
+  tol_density_mean: 1.0e-4       # relative to F (FR-13)
+  tol_price: 1.0e-9              # call prices in units of F, for rounding in the wings
   fallback: [constrained_refit, ssvi_slice, drop]
 heston:
   pricer: cos                    # cos | fft

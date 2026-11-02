@@ -11,7 +11,7 @@ import math
 
 import numpy as np
 from numba import prange
-from numpy.typing import NDArray
+from numpy.typing import ArrayLike, NDArray
 
 from vsm._jit import njit
 from vsm.iv.black import F64, PARALLEL_MIN_SIZE, SQRT_2PI, norm_otm_price
@@ -246,12 +246,12 @@ def _iv_parallel(
 
 
 def implied_vol(
-    price: F64,
-    forward: F64,
-    strike: F64,
-    t: F64,
-    is_call: NDArray[np.bool_],
-    discount: F64 | float = 1.0,
+    price: ArrayLike,
+    forward: ArrayLike,
+    strike: ArrayLike,
+    t: ArrayLike,
+    is_call: ArrayLike,
+    discount: ArrayLike = 1.0,
     *,
     max_iter: int = 50,
 ) -> tuple[F64, NDArray[np.int8]]:
@@ -266,12 +266,12 @@ def implied_vol(
 
 
 def implied_vol_detail(
-    price: F64,
-    forward: F64,
-    strike: F64,
-    t: F64,
-    is_call: NDArray[np.bool_],
-    discount: F64 | float = 1.0,
+    price: ArrayLike,
+    forward: ArrayLike,
+    strike: ArrayLike,
+    t: ArrayLike,
+    is_call: ArrayLike,
+    discount: ArrayLike = 1.0,
     max_iter: int = 50,
 ) -> tuple[F64, NDArray[np.int8], NDArray[np.int32]]:
     """``implied_vol`` plus iterations per quote; ``max_iter + 1`` marks a Brent finish."""

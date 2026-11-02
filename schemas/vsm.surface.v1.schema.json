@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/avmhdt/vol-surface-modeling/schemas/vsm.surface.v1.schema.json",
+  "title": "vsm.surface.v1",
+  "description": "An arbitrage-gated implied volatility surface for one underlying and as-of time. Additive optional fields are allowed; breaking changes need vsm.surface.v2.",
+  "type": "object",
+  "required": [
+    "schema",
+    "underlying",
+    "venue",
+    "as_of",
+    "as_of_ns",
+    "spot",
+    "conventions",
+    "canonical",
+    "ssvi",
+    "expiries",
+    "arbitrage",
+    "heston",
+    "sabr",
+    "local_vol",
+    "provenance"
+  ],
+  "properties": {
+    "schema": {"const": "vsm.surface.v1"},
+    "underlying": {"type": "string", "minLength": 1},
+    "venue": {"type": "string", "minLength": 1},
+    "as_of": {"$ref": "#/$defs/timestamp"},
+    "as_of_ns": {"type": "integer"},
+    "spot": {
+      "type": "object",
+      "required": ["index_name", "value"],
+      "properties": {
+        "index_name": {"type": "string"},
+        "value": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "conventions": {
+      "type": "object",
+      "required": [
+        "option_style",
+        "settlement",
+        "premium_currency",
+        "pricing",
+        "year_fraction",
+        "expiry_time_utc",
+        "moneyness",
+        "total_variance",
+        "coin_rate"
+      ],
+      "properties": {
+        "option_style": {"const": "european"},
+        "settlement": {"enum": ["inverse", "cash_usd"]},
+        "premium_currency": {"type": "string"},
+        "pricing": {"type": "string"},
+        "year_fraction": {"type": "string"},
+        "expiry_time_utc": {"type": "string"},
+        "moneyness": {"type": "string"},
+        "total_variance": {"type": "string"},
+        "coin_rate": {"enum": ["zero", "implied"]}
+      }
+    },
+    "canonical": {"enum": ["ssvi", "svi"]},
+    "ssvi": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "required": [
+            "phi",
+            "rho",
+            "eta",
+            "gamma",
+            "theta_interpolation",
+            "t_nodes",
+            "theta_nodes"
+          ],
+          "properties": {
+            "phi": {"enum": ["power_law", "heston_like"]},
+            "rho": {"type": "number", "exclusiveMinimum": -1, "exclusiveMaximum": 1},
+            "eta": {"type": "number", "exclusiveMinimum": 0},
+            "gamma": {"type": "number"},
+            "lambda": {"type": ["number", "null"]},
+            "theta_interpolation": {"const": "linear_in_t"},
+            "t_nodes": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"type": "number", "exclusiveMinimum": 0}
+            },
+            "theta_nodes": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"type": "number", "exclusiveMinimum": 0}
+            }
+          }
+        }
+      ]
+    },
+    "expiries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/expiry"}
+    },
+    "arbitrage": {
+      "type": "object",
+      "required": ["passed", "min_g", "min_calendar_dw", "density_mass_max_err", "grid"],
+      "properties": {
+        "passed": {"const": true},
+        "min_g": {"type": "number"},
+        "min_calendar_dw": {"type": "number"},
+        "density_mass_max_err": {"type": "number", "minimum": 0},
+        "grid": {
+          "type": "object",
+          "required": ["z_min", "z_max", "n"],
+          "properties": {
+            "z_min": {"type": "number"},
+            "z_max": {"type": "number"},
+            "n": {"type": "integer", "minimum": 2}
+          }
+        }
+      }
+    },
+    "heston": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "required": ["v0", "kappa", "theta", "xi", "rho", "rmse_iv_bp", "converged"],
+          "properties": {
+            "v0": {"type": "number"},
+            "kappa": {"type": "number"},
+            "theta": {"type": "number"},
+            "xi": {"type": "number"},
+            "rho": {"type": "number"},
+            "rmse_iv_bp": {"type": "number"},
+            "converged": {"type": "boolean"}
+          }
+        }
+      ]
+    },
+    "sabr": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["expiry", "alpha", "beta", "rho", "nu"],
+        "properties": {
+          "expiry": {"$ref": "#/$defs/timestamp"},
+          "alpha": {"type": "number"},
+          "beta": {"type": "number"},
+          "rho": {"type": "number"},
+          "nu": {"type": "number"}
+        }
+      }
+    },
+    "local_vol": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "required": ["k_grid", "t_grid", "sigma"],
+          "properties": {
+            "k_grid": {"type": "array", "items": {"type": "number"}},
+            "t_grid": {"type": "array", "items": {"type": "number"}},
+            "sigma": {
+              "type": "array",
+              "items": {"type": "array", "items": {"type": "number"}}
+            }
+          }
+        }
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["vsm_version", "git_sha", "config_hash", "snapshot_id", "created_at"],
+      "properties": {
+        "vsm_version": {"type": "string"},
+        "git_sha": {"type": "string"},
+        "config_hash": {"type": "string"},
+        "snapshot_id": {"type": "string"},
+        "created_at": {"$ref": "#/$defs/timestamp"},
+        "producer": {"type": "string"}
+      }
+    }
+  },
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "expiry": {
+      "type": "object",
+      "required": [
+        "expiry",
+        "expiry_ns",
+        "t",
+        "forward",
+        "forward_method",
+        "forward_se",
+        "discount_factor",
+        "basis_annualized",
+        "dividend_yield",
+        "svi_raw",
+        "slice_source",
+        "k_range_quoted",
+        "fit"
+      ],
+      "properties": {
+        "expiry": {"$ref": "#/$defs/timestamp"},
+        "expiry_ns": {"type": "integer"},
+        "t": {"type": "number", "exclusiveMinimum": 0},
+        "forward": {"type": "number", "exclusiveMinimum": 0},
+        "forward_method": {"enum": ["parity_wls", "future", "deribit_underlying"]},
+        "forward_se": {"type": ["number", "null"]},
+        "discount_factor": {"type": "number", "exclusiveMinimum": 0},
+        "basis_annualized": {"type": "number"},
+        "dividend_yield": {"type": ["number", "null"]},
+        "svi_raw": {
+          "type": "object",
+          "required": ["a", "b", "rho", "m", "sigma"],
+          "properties": {
+            "a": {"type": "number"},
+            "b": {"type": "number", "minimum": 0},
+            "rho": {"type": "number", "exclusiveMinimum": -1, "exclusiveMaximum": 1},
+            "m": {"type": "number"},
+            "sigma": {"type": "number", "exclusiveMinimum": 0}
+          }
+        },
+        "slice_source": {"enum": ["svi", "svi_constrained", "ssvi_fallback"]},
+        "k_range_quoted": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"type": "number"}
+        },
+        "fit": {
+          "type": "object",
+          "required": ["n_quotes", "n_liquid", "rmse_iv_bp", "within_spread_frac"],
+          "properties": {
+            "n_quotes": {"type": "integer", "minimum": 0},
+            "n_liquid": {"type": "integer", "minimum": 0},
+            "rmse_iv_bp": {"type": "number", "minimum": 0},
+            "within_spread_frac": {"type": ["number", "null"]}
+          }
+        }
+      }
+    }
+  }
+}

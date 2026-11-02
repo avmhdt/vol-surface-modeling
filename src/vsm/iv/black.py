@@ -14,7 +14,7 @@ import math
 
 import numpy as np
 from numba import prange
-from numpy.typing import NDArray
+from numpy.typing import ArrayLike, NDArray
 
 from vsm._jit import njit
 
@@ -192,12 +192,12 @@ def _vega_parallel(forward: F64, strike: F64, t: F64, vol: F64) -> F64:
 
 
 def black76_price(
-    forward: F64,
-    strike: F64,
-    t: F64,
-    vol: F64,
-    is_call: NDArray[np.bool_],
-    discount: F64 | float = 1.0,
+    forward: ArrayLike,
+    strike: ArrayLike,
+    t: ArrayLike,
+    vol: ArrayLike,
+    is_call: ArrayLike,
+    discount: ArrayLike = 1.0,
 ) -> F64:
     """Black-76 price in the units of ``forward``; ``t`` in years, ``vol`` decimal.
 
@@ -217,7 +217,7 @@ def black76_price(
     return kernel(*flat).reshape(shape)
 
 
-def black76_vega(forward: F64, strike: F64, t: F64, vol: F64) -> F64:
+def black76_vega(forward: ArrayLike, strike: ArrayLike, t: ArrayLike, vol: ArrayLike) -> F64:
     """Undiscounted dPrice/dVol, in the units of ``forward`` per 1.0 of vol."""
     arrays = np.broadcast_arrays(
         np.asarray(forward, dtype=np.float64),
