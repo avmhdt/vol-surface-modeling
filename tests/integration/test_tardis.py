@@ -73,7 +73,9 @@ def transport_for(data: bytes) -> tuple[httpx.MockTransport, dict[str, int]]:
 
 @pytest.fixture
 def config() -> TardisConfig:
-    return TardisConfig(crypto_status_path="/nonexistent/status.json", free_space_path=".")
+    return TardisConfig(
+        crypto_status_path="/nonexistent/status.json", free_space_path=".", min_free_gb=0.0
+    )
 
 
 def run_day(
@@ -231,7 +233,8 @@ def status_file(path: Path, resyncs: int, p99: float, *, age_s: float = 0.0) -> 
 def guard_for(tmp_path: Path, **overrides: Any) -> tuple[tardis.IngestGuard, Path]:
     path = tmp_path / "status.json"
     status_file(path, 3, 100.0)
-    cfg = TardisConfig(crypto_status_path=str(path), free_space_path=".", **overrides)
+    settings = {"free_space_path": ".", "min_free_gb": 0.0, **overrides}
+    cfg = TardisConfig(crypto_status_path=str(path), **settings)
     return tardis.IngestGuard(cfg), path
 
 
@@ -260,7 +263,7 @@ def test_guard_ignores_normal_variation_in_p99(tmp_path: Path) -> None:
 
 
 def test_guard_pauses_on_low_disk(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    guard, _ = guard_for(tmp_path)
+    guard, _ = guard_for(tmp_path, min_free_gb=100.0)
     usage = namedtuple("usage", "total used free")
     monkeypatch.setattr(tardis.shutil, "disk_usage", lambda _: usage(0, 0, 99_000_000_000))
     assert "free space" in str(guard.reason())
@@ -345,6 +348,7 @@ def cli_setup(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Callable[[], h
     config.paths.results_dir = tmp_path / "results"
     config.tardis.crypto_status_path = "/nonexistent/status.json"
     config.tardis.free_space_path = "."
+    config.tardis.min_free_gb = 0.0
     monkeypatch.setenv("VSM_DATA_DIR", str(tmp_path / "data"))
     monkeypatch.setattr(cli, "load_config", lambda path=None: config)
     transport, _ = transport_for(body())
