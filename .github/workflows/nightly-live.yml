@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   live:
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     env:
       UV_FROZEN: "1"

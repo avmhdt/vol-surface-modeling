@@ -1,7 +1,15 @@
 {
-  "days": 1,
-  "jw_median_abs": null,
-  "p95_abs_d_rho": null,
-  "p95_rel_d_eta": null,
+  "days": 2,
+  "jw_median_abs": {
+    "jw_c": 0.12672359828664026,
+    "jw_p": 0.02626883541945646,
+    "jw_psi": 0.03649960120268411,
+    "jw_v": 0.011379926681127805,
+    "jw_vtilde": 0.008271114425125348
+  },
+  "median_abs_d_gamma": 0.0,
+  "median_rel_d_theta_30d": 0.18507259854990624,
+  "p95_abs_d_rho": 0.07297138609016117,
+  "p95_rel_d_eta": 0.015422601545675114,
   "underlying": "ETH"
 }

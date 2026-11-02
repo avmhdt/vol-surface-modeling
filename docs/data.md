@@ -63,7 +63,24 @@ Checked on 2026-11-02. The grouped symbol `OPTIONS` lists `options_chain`, and t
 | 2024-06-01 | 2.35 GB |
 | 2026-10-01 | 17.9 GB |
 
-These are larger than the spec expected. If rows are in time order, the stream can stop after the 07:45 to 08:20 UTC window, reading about a third of a file and writing none of it to disk. That ordering has not been checked yet.
+These are larger than the spec expected, so the ingest streams each file and stops after the window, writing none of it to disk.
+
+One-file test on the largest file, 2026-10-01, at the 10 MB/s cap:
+
+- Read 5.22 of 17.93 GB (29.1%) in 522 s, at 10.0 MB/s.
+- 103.0 million rows read, with 0 steps backwards in `local_timestamp`, so stopping early is safe for this file. `timestamp` is not in order. Each file's count is stored in `results/metrics/tardis_ingest.json`.
+- 1,800 BTC and ETH quotes kept. Recent files also hold USDC options on other coins, which are filtered out.
+- The crypto recorder had no resyncs, and median ingest p99 did not change: 275 to 237 us on Binance, 393 to 416 us on Coinbase, 269 to 288 us on Kraken, comparing the 40 minutes before with the 9 during.
+
+Projected reads at 29.1% of each file. Early files may differ, since the share depends on how the day's activity is spread.
+
+| Files | Compressed total | Projected read | At 10 MB/s |
+|---|---|---|---|
+| Smallest 20 | 15.6 GB | 4.5 GB | 8 minutes |
+| Most recent 20 | 145.7 GB | 42.4 GB | 1.2 hours |
+| All 80 | 249.7 GB | 72.7 GB | 2.0 hours |
+
+Only about 1,800 rows per file are kept, so disk use is under 1 MB per day.
 
 ## Datasets
 

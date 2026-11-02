@@ -13,10 +13,10 @@ import structlog
 
 from vsm.clean import CleanResult, clean_snapshot
 from vsm.config import AppConfig, config_hash
-from vsm.conventions import ns_to_datetime
+from vsm.conventions import datetime_to_ns, ns_to_datetime
 from vsm.explog import git_sha
 from vsm.export.bundle import write_surface_bundle
-from vsm.io import recorder, storage
+from vsm.io import recorder, storage, tardis
 from vsm.surface import spline_baseline
 from vsm.surface.arbitrage import check_surface
 from vsm.surface.density import moments, risk_reversal_25
@@ -37,6 +37,7 @@ from vsm.viz import figures
 CLEAN_STEPS = ("clean", "forwards", "iv")
 ALL_STEPS = (*CLEAN_STEPS, "fit", "check", "export")
 REFERENCE_TENOR = 30.0 / 365.0
+HOUR_NS = 3_600_000_000_000
 
 CANONICAL_TOLERANCE = timedelta(minutes=recorder.CANONICAL_TOLERANCE_MIN)
 
@@ -49,6 +50,7 @@ class Snapshot:
 
     label: str
     flagged: bool
+    source: str = "recorder"
 
 
 def select_snapshot(data_dir: Path, underlying: str, day: date, time_utc: str) -> Snapshot | None:
@@ -64,7 +66,11 @@ def select_snapshot(data_dir: Path, underlying: str, day: date, time_utc: str) -
         for label in captured
         if abs((when := recorder.label_time(label)) - target) <= CANONICAL_TOLERANCE
     ]
-    return Snapshot(min(near)[1], True) if near else None
+    if near:
+        return Snapshot(min(near)[1], True)
+    if tardis.snapshot_path(data_dir, underlying, day, exact).exists():
+        return Snapshot(exact, False, "tardis")
+    return None
 
 
 def _read_snapshot(
@@ -74,6 +80,24 @@ def _read_snapshot(
     snapshot = f"{storage.VENUE}-{underlying}-{label}"
     path = storage.snapshot_path(data_dir, dataset, underlying, day, snapshot)
     return pl.read_parquet(path) if path.exists() else None
+
+
+def _spot_before(data_dir: Path, underlying: str, as_of_ns: int, options: pl.DataFrame) -> float:
+    """Spot for a snapshot with no futures file: the last perpetual close before as-of.
+
+    Basis is reported, never an input, so a close near spot is enough. Without one, it falls
+    back to the underlying price of the nearest expiry.
+    """
+    year = ns_to_datetime(as_of_ns).year
+    path = storage.raw_dir(data_dir) / "perp_ohlc" / f"symbol={underlying}-PERPETUAL"
+    file = path / f"part-{year}.parquet"
+    if file.exists():
+        bars = pl.read_parquet(file, columns=["ts", "close"]).filter(
+            pl.col("ts") + HOUR_NS <= as_of_ns
+        )
+        if bars.height:
+            return float(bars.sort("ts")["close"][-1])
+    return float(options.sort("expiry_ns")["underlying_px"].drop_nulls()[0])
 
 
 def _tick_sizes(data_dir: Path, underlying: str) -> pl.DataFrame:
@@ -113,16 +137,37 @@ def run_day(
     if snapshot is None:
         log.warning("no_snapshot", underlying=underlying, day=day.isoformat(), time_utc=time_utc)
         return None
-    options = _read_snapshot(data_dir, storage.OPTION_QUOTES, underlying, snapshot.label)
-    futures = _read_snapshot(data_dir, storage.FUTURE_QUOTES, underlying, snapshot.label)
-    if options is None or futures is None:
-        log.warning("incomplete_snapshot", underlying=underlying, label=snapshot.label)
-        return None
-
-    as_of_ns = max(int(options["ts_recv"].max()), int(futures["ts_recv"].max()))  # type: ignore[arg-type]
-    spot_index = float(futures["index_px"][0])
+    staleness_s = None
+    if snapshot.source == "tardis":
+        path = tardis.snapshot_path(data_dir, underlying, day, snapshot.label)
+        options = pl.read_parquet(path)
+        if options.is_empty():
+            log.warning("empty_snapshot", underlying=underlying, label=snapshot.label)
+            return None
+        futures = pl.DataFrame(schema=storage.FUTURE_QUOTES_SCHEMA)
+        as_of_ns = datetime_to_ns(recorder.label_time(snapshot.label))
+        spot_index = _spot_before(data_dir, underlying, as_of_ns, options)
+        staleness_s = tardis.STALENESS_S
+    else:
+        recorded = _read_snapshot(data_dir, storage.OPTION_QUOTES, underlying, snapshot.label)
+        recorded_futures = _read_snapshot(
+            data_dir, storage.FUTURE_QUOTES, underlying, snapshot.label
+        )
+        if recorded is None or recorded_futures is None:
+            log.warning("incomplete_snapshot", underlying=underlying, label=snapshot.label)
+            return None
+        options, futures = recorded, recorded_futures
+        latest = (options["ts_recv"].max(), futures["ts_recv"].max())
+        as_of_ns = max(int(latest[0]), int(latest[1]))  # type: ignore[arg-type]
+        spot_index = float(futures["index_px"][0])
     result = clean_snapshot(
-        options, futures, spot_index, as_of_ns, _tick_sizes(data_dir, underlying), config
+        options,
+        futures,
+        spot_index,
+        as_of_ns,
+        _tick_sizes(data_dir, underlying),
+        config,
+        staleness_s=staleness_s,
     )
 
     stamp = day.isoformat()
@@ -141,6 +186,7 @@ def run_day(
         "date": stamp,
         "snapshot": snapshot.label,
         "snapshot_flagged": snapshot.flagged,
+        "source": snapshot.source,
         **result.report,
     }
     out = config.results_dir() / "dq" / f"{underlying}_{stamp}.json"

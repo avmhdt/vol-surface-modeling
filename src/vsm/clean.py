@@ -370,11 +370,19 @@ def clean_snapshot(
     as_of_ns: int,
     tick_size: pl.DataFrame,
     config: AppConfig,
+    *,
+    staleness_s: int | None = None,
 ) -> CleanResult:
-    """Run one snapshot from raw quotes to ``clean_quotes``, ``forwards`` and the DQ report."""
+    """Run one snapshot from raw quotes to ``clean_quotes``, ``forwards`` and the DQ report.
+
+    ``staleness_s`` overrides the configured limit, for Tardis-derived snapshots (DQ-01).
+    """
     known = point_in_time(options, as_of_ns)
     known_futures = point_in_time(futures, as_of_ns)
-    tagged = tag_quotes(known, as_of_ns, config.cleaning, config.conventions.year_seconds)
+    cleaning = config.cleaning
+    if staleness_s is not None:
+        cleaning = cleaning.model_copy(update={"staleness_s": staleness_s})
+    tagged = tag_quotes(known, as_of_ns, cleaning, config.conventions.year_seconds)
     live = tagged.filter(pl.col("t") > 0.0)
     forwards = implied_forwards(
         live,

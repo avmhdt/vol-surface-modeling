@@ -5,6 +5,7 @@ from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Annotated
 
+import httpx
 import jsonschema
 import typer
 
@@ -17,6 +18,7 @@ from vsm.io import recorder
 from vsm.io.deribit import DeribitClient
 from vsm.io.history import ingest_history
 from vsm.io.smoke import run_smoke
+from vsm.io.tardis import first_of_month_days, ingest_months
 from vsm.logs import configure_logging
 from vsm.models.runner import calibrate_heston_day, calibrate_sabr_day, refresh_comparison
 from vsm.pipeline import ALL_STEPS, export_day, recheck_day, refresh_outputs, run_day
@@ -36,6 +38,10 @@ CurrencyOption = Annotated[str, typer.Option("--currency", help="Comma-separated
 
 def _split(values: str) -> list[str]:
     return [value.strip() for value in values.split(",") if value.strip()]
+
+
+def _tardis_client() -> httpx.Client:
+    return httpx.Client(timeout=httpx.Timeout(60.0, read=120.0))
 
 
 def _client(settings: Settings, config: AppConfig) -> DeribitClient:
@@ -331,6 +337,42 @@ def ingest_instruments(
                 expired=expired,
             )
             typer.echo(f"{underlying}: {table.height} instruments stored")
+
+
+@ingest_app.command("tardis")
+def ingest_tardis(
+    mode: Annotated[str, typer.Option("--mode", help="first-of-month")],
+    start: Annotated[str, typer.Option("--start", help="YYYY-MM-DD")],
+    end: Annotated[str, typer.Option("--end", help="YYYY-MM-DD")],
+    at: Annotated[str, typer.Option("--at", help="HH:MM UTC.")] = "08:15",
+    keep_raw: Annotated[bool, typer.Option("--keep-raw")] = False,
+) -> None:
+    """Free first-of-month files to snapshots, rate-capped, one file at a time."""
+    if mode != "first-of-month":
+        typer.echo("only first-of-month is approved; paid daily history needs D-02")
+        raise typer.Exit(code=2)
+    settings = Settings()
+    config = load_config()
+    configure_logging(settings.log_level, as_json=settings.log_json)
+    days = first_of_month_days(date.fromisoformat(start), date.fromisoformat(end))
+    with _tardis_client() as client:
+        done = ingest_months(
+            client,
+            settings.data_dir,
+            config.results_dir(),
+            settings.tardis_datasets_url,
+            days,
+            at,
+            config.tardis,
+            keep_raw=keep_raw or config.tardis.keep_raw,
+        )
+    for stats in done:
+        typer.echo(
+            f"{stats.date}: read {stats.bytes_read / 1e9:.2f} of {stats.total_bytes / 1e9:.2f} GB "
+            f"in {stats.seconds:.0f} s, kept {stats.rows_kept} rows, "
+            f"inversions {stats.inversions}, reached_end {stats.reached_end}"
+        )
+    typer.echo(f"{len(done)} of {len(days)} days fetched; the rest already existed")
 
 
 @ingest_app.command("deribit-history")

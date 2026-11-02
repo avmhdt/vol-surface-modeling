@@ -1,6 +1,7 @@
 """Unit and time conventions. Every venue-unit conversion in the project lives here."""
 
 from datetime import UTC, date, datetime
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -50,6 +51,11 @@ def percent_to_decimal(vol_pct: F64) -> F64:
 def log_moneyness(strike: F64, forward: F64) -> F64:
     """k = ln(K/F)."""
     return np.log(np.asarray(strike, dtype=np.float64) / forward)
+
+
+def us_to_ns(us: Any) -> Any:
+    """Microseconds to nanoseconds; works on ints, arrays and polars expressions."""
+    return us * 1_000
 
 
 def ms_to_ns(ms: int) -> int:

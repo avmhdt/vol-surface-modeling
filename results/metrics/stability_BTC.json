@@ -1,7 +1,15 @@
 {
-  "days": 1,
-  "jw_median_abs": null,
-  "p95_abs_d_rho": null,
-  "p95_rel_d_eta": null,
+  "days": 2,
+  "jw_median_abs": {
+    "jw_c": 0.09000411541037184,
+    "jw_p": 0.14560571544568524,
+    "jw_psi": 0.045963932458162875,
+    "jw_v": 0.010801623989901366,
+    "jw_vtilde": 0.0047235696853347164
+  },
+  "median_abs_d_gamma": 0.0,
+  "median_rel_d_theta_30d": 0.3070213957365332,
+  "p95_abs_d_rho": 0.10049331315909492,
+  "p95_rel_d_eta": 0.0951206197008319,
   "underlying": "BTC"
 }
