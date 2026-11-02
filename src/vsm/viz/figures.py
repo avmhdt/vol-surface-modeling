@@ -70,6 +70,34 @@ def spline_vs_svi_density(spline: SplineSlice, svi: RawSVI, title: str, path: Pa
     _save(fig, path)
 
 
+def model_fit_comparison(
+    models: list[str], rmse_bp: list[float], inside: list[float], title: str, path: Path
+) -> None:
+    """IV RMSE by model, with the share of quotes inside the spread beside each bar."""
+    fig, ax = plt.subplots(figsize=(7.2, 3.0))
+    fig.patch.set_facecolor(SURFACE)
+    _style(ax)
+    ax.grid(axis="y", visible=False)
+    ax.grid(axis="x", color=GRID, linewidth=0.8)
+    positions = np.arange(len(models))[::-1]
+    ax.barh(positions, rmse_bp, height=0.55, color=BLUE)
+    ax.set_yticks(positions, models)
+    limit = max(rmse_bp) * 1.32
+    ax.set_xlim(0.0, limit)
+    for position, value, share in zip(positions, rmse_bp, inside, strict=True):
+        ax.text(
+            value + limit * 0.012,
+            position,
+            f"{value:.0f} bp, {100.0 * share:.0f}% inside spread",
+            va="center",
+            color=INK,
+            fontsize=8,
+        )
+    ax.set_xlabel("IV RMSE, vol bp")
+    ax.set_title(title, loc="left", color=INK, fontsize=11)
+    _save(fig, path)
+
+
 def rnd_skew(risk_reversal: F64, skewness: F64, t_days: F64, title: str, path: Path) -> None:
     """Density skewness against the 25-delta risk reversal, one point per slice."""
     fig, ax = plt.subplots(figsize=(7.2, 4.0))

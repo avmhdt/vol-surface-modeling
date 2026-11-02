@@ -173,7 +173,7 @@ def test_canonical_snapshot_is_preferred_among_stored(built: Path, config: AppCo
         (pl.col("as_of_ns") + 3_600_000_000_000).alias("as_of_ns"),
     )
     storage.write_parquet_atomic(pl.concat([rows, later]), store.params_path(built, "BTC"))
-    chosen = pipeline._stored_rows(built, config, "BTC", DAY)
+    chosen = pipeline.stored_rows(built, config, "BTC", DAY)
     assert chosen is not None
     assert chosen["snapshot_id"][0] == f"deribit-BTC-{LABEL}"
 

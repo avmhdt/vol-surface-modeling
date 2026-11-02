@@ -32,7 +32,8 @@ SSVI is the arbitrage-free continuum, but it is a much stiffer model than a raw 
 
 - `expiries[].forward_se` is null when the forward came from a fallback, since only the parity regression has a standard error.
 - `expiries[].fit.within_spread_frac` is null when a slice has no liquid quotes.
-- `heston` and `local_vol` are null, and `sabr` is empty, until M4 and M5 fill them. The fields are additive, so this needs no new version.
+- `heston` is null and `sabr` is empty on a day with no calibration.
+- `local_vol` is null until M5.
 
 ## `discount_factor`
 

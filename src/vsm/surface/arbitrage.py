@@ -40,14 +40,20 @@ def check_grid(svi: RawSVI, quoted: F64, cfg: ArbitrageConfig) -> F64:
 
 
 def _prices_ok(svi: RawSVI, k: F64, tol: float) -> bool:
-    """Call prices in units of F are non-increasing and convex in strike."""
+    """Call prices in units of F are non-increasing and convex in strike.
+
+    A slope between close strikes is only known to one ulp of price over the gap, so that
+    rounding is added to ``tol``. It is what the division itself introduces, not slack.
+    """
     strike, first = np.unique(np.exp(k), return_index=True)
     w = svi.w(k[first])
     price = black76_price(1.0, strike, 1.0, np.sqrt(w), True)
-    slope = np.diff(price) / np.diff(strike)
-    if np.any(slope > tol):
+    gap = np.diff(strike)
+    slope = np.diff(price) / gap
+    noise = (np.spacing(price[:-1]) + np.spacing(price[1:])) / gap
+    if np.any(slope > tol + noise):
         return False
-    return not bool(np.any(np.diff(slope) < -tol))
+    return not bool(np.any(np.diff(slope) < -(tol + noise[:-1] + noise[1:])))
 
 
 def check_slice(

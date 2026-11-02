@@ -32,6 +32,8 @@ def surface_document(
     git_sha: str = "unknown",
     config_hash: str = "",
     created_at: datetime | None = None,
+    heston: dict[str, Any] | None = None,
+    sabr: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """The JSON document of a gated surface. Refuses a surface that failed the gate."""
     report = surface.report
@@ -103,8 +105,8 @@ def surface_document(
             "density_mass_max_err": report.density_mass_max_err,
             "grid": {"z_min": cfg.grid_z.min, "z_max": cfg.grid_z.max, "n": cfg.grid_z.n},
         },
-        "heston": None,
-        "sabr": [],
+        "heston": heston,
+        "sabr": sabr or [],
         "local_vol": None,
         "provenance": {
             "vsm_version": vsm.__version__,
@@ -131,6 +133,8 @@ def write_surface_bundle(
     coin_rate: str = "zero",
     git_sha: str = "unknown",
     config_hash: str = "",
+    heston: dict[str, Any] | None = None,
+    sabr: list[dict[str, Any]] | None = None,
 ) -> str:
     """Write the JSON file of a gated surface and return its path."""
     document = surface_document(
@@ -139,6 +143,8 @@ def write_surface_bundle(
         coin_rate=coin_rate,
         git_sha=git_sha,
         config_hash=config_hash,
+        heston=heston,
+        sabr=sabr,
     )
     path = bundle_path(surface, out_dir)
     path.parent.mkdir(parents=True, exist_ok=True)
