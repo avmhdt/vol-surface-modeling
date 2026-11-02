@@ -4,7 +4,13 @@ import pytest
 from scipy.stats import norm
 
 from vsm.config import ArbitrageConfig
-from vsm.surface.arbitrage import calendar_margin, check_grid, check_slice, check_surface
+from vsm.surface.arbitrage import (
+    _prices_ok,
+    calendar_margin,
+    check_grid,
+    check_slice,
+    check_surface,
+)
 from vsm.surface.density import bl_density, density_k, moments, risk_reversal_25
 from vsm.surface.spline_baseline import evaluate, spline_slices
 from vsm.surface.ssvi import SSVI
@@ -66,6 +72,16 @@ def test_gate_catches_arbitrage_inside_the_quotes_past_z_6() -> None:
     assert not check_slice(VOGT, np.array([-1.5, 1.5]), CFG).passed
     assert check_slice(VOGT, np.array([-1.5, 1.5]), CFG).min_g < -CFG.tol_g
     assert check_slice(repaired, np.array([-0.5, 0.5]), CFG).min_g > 0.0
+
+
+def test_price_check_allows_rounding_between_close_strikes() -> None:
+    # A real surface, inside the SSVI conditions, whose strikes are 7e-8 apart at the low end.
+    surface = SSVI(0.625, 1.0, 0.5, (0.5, 1.0), (1.6875, 4.5))
+    assert check_slice(surface.slice_at(1.0), np.empty(0), CFG).price_ok
+
+
+def test_price_check_still_catches_a_real_violation() -> None:
+    assert not _prices_ok(VOGT, np.linspace(0.7, 1.3, 601), CFG.tol_price)
 
 
 def test_good_slice_passes() -> None:

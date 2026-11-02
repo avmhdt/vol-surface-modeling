@@ -3,6 +3,9 @@
 The COS price depends on the parameters through phi and, weakly, through the truncation
 interval, which the gradient holds fixed on purpose. Finite differences hold it fixed too, so
 both differentiate the same function.
+
+The step is 1e-6 relative to the parameter, with a floor. Near a small value such as rho = 0.01
+a purely relative step is so short that rounding in the prices is the error being measured.
 """
 
 import numpy as np
@@ -19,6 +22,7 @@ SETS = 50
 STRIKES = 100.0 * np.exp(np.linspace(-0.3, 0.3, 9))
 CALLS = STRIKES >= 100.0
 TOLERANCE = 1e-5
+STEP_FLOOR = 0.1
 
 
 def random_parameters() -> list[tuple[F64, float]]:
@@ -30,7 +34,7 @@ def random_parameters() -> list[tuple[F64, float]]:
 
 
 def central_difference(x: F64, t: float, j: int) -> F64:
-    step = 1e-6 * x[j]
+    step = 1e-6 * max(abs(x[j]), STEP_FLOOR)
     up, down = x.copy(), x.copy()
     up[j] += step
     down[j] -= step
