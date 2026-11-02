@@ -4,8 +4,10 @@ The COS price depends on the parameters through phi and, weakly, through the tru
 interval, which the gradient holds fixed on purpose. Finite differences hold it fixed too, so
 both differentiate the same function.
 
-The step is 1e-6 relative to the parameter, with a floor. Near a small value such as rho = 0.01
-a purely relative step is so short that rounding in the prices is the error being measured.
+At the spec's step of 1e-6 relative, the reference is limited by rounding in the prices it
+subtracts, which is about ulp(price) / step. At extreme parameters on some builds that exceeds
+1e-5 of a small sensitivity, so the comparison allows for that rounding. A step ten times longer
+cuts the rounding tenfold, and there the 1e-5 limit applies with no allowance.
 """
 
 import numpy as np
@@ -22,7 +24,8 @@ SETS = 50
 STRIKES = 100.0 * np.exp(np.linspace(-0.3, 0.3, 9))
 CALLS = STRIKES >= 100.0
 TOLERANCE = 1e-5
-STEP_FLOOR = 0.1
+SPEC_STEP = 1e-6
+ROUNDING_ULPS = 16.0
 
 
 def random_parameters() -> list[tuple[F64, float]]:
@@ -33,14 +36,16 @@ def random_parameters() -> list[tuple[F64, float]]:
     return [(rng.uniform(low, high), float(rng.uniform(0.05, 2.0))) for _ in range(SETS)]
 
 
-def central_difference(x: F64, t: float, j: int) -> F64:
-    step = 1e-6 * max(abs(x[j]), STEP_FLOOR)
+def central_difference(x: F64, t: float, j: int, relative_step: float) -> tuple[F64, F64]:
+    """The difference, and the rounding bound on it, per strike."""
+    step = relative_step * abs(x[j])
     up, down = x.copy(), x.copy()
     up[j] += step
     down[j] -= step
     high = heston_price_cos(HestonParams(*up), 100.0, STRIKES, t, CALLS)
     low = heston_price_cos(HestonParams(*down), 100.0, STRIKES, t, CALLS)
-    return (high - low) / (2.0 * step)
+    rounding = ROUNDING_ULPS * np.spacing(np.maximum(np.abs(high), np.abs(low))) / (2.0 * step)
+    return (high - low) / (2.0 * step), rounding
 
 
 def test_defaults_match_the_config() -> None:
@@ -49,20 +54,37 @@ def test_defaults_match_the_config() -> None:
     assert cfg.cos_truncation_L == heston_cos.DEFAULT_L
 
 
-@pytest.mark.parametrize("j", range(5), ids=NAMES)
-def test_gradient_matches_central_differences(j: int, monkeypatch: pytest.MonkeyPatch) -> None:
+def worst_relative_error(
+    j: int, relative_step: float, monkeypatch: pytest.MonkeyPatch
+) -> tuple[float, float]:
+    """Worst error over the sets: plain, and after the reference's rounding is taken off."""
     real = heston_cos._bounds
-    worst = 0.0
+    plain = 0.0
+    allowed = 0.0
     for x, t in random_parameters():
         p = HestonParams(*x)
         _, grad = heston_price_and_grad_cos(p, 100.0, STRIKES, t, CALLS)
         frozen = real(t, p, heston_cos.DEFAULT_L)
         monkeypatch.setattr(heston_cos, "_bounds", lambda *_, b=frozen: b)
-        difference = central_difference(x, t, j)
+        difference, rounding = central_difference(x, t, j, relative_step)
         monkeypatch.setattr(heston_cos, "_bounds", real)
-        relative = np.abs(grad[:, j] - difference) / np.maximum(np.abs(difference), 1e-6)
-        worst = max(worst, float(relative.max()))
-    assert worst <= TOLERANCE
+        floor = np.maximum(np.abs(difference), 1e-6)
+        error = np.abs(grad[:, j] - difference)
+        plain = max(plain, float((error / floor).max()))
+        allowed = max(allowed, float((np.maximum(error - rounding, 0.0) / floor).max()))
+    return plain, allowed
+
+
+@pytest.mark.parametrize("j", range(5), ids=NAMES)
+def test_gradient_at_the_spec_step(j: int, monkeypatch: pytest.MonkeyPatch) -> None:
+    assert worst_relative_error(j, SPEC_STEP, monkeypatch)[1] <= TOLERANCE
+
+
+@pytest.mark.parametrize("j", range(5), ids=NAMES)
+def test_gradient_at_a_longer_step_needs_no_allowance(
+    j: int, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    assert worst_relative_error(j, 10.0 * SPEC_STEP, monkeypatch)[0] <= TOLERANCE
 
 
 def test_cf_gradient_at_complex_arguments() -> None:
