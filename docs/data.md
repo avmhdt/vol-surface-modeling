@@ -31,7 +31,7 @@ Only public endpoints are used. `DeribitClient` refuses any other method. Check 
 
 ## Measured size
 
-One snapshot of both currencies, about 1,770 rows, takes about 148 kB of zstd Parquet, measured on the first run on 2026-11-01. That is roughly 1.3 GB per year, inside the spec's 1 to 3 GB estimate. Ticker sweeps add to this and will be measured after the first 08:15 run.
+One snapshot of both currencies, about 1,770 rows, takes about 148 kB of zstd Parquet, measured on the first run on 2026-11-01. That is roughly 1.3 GB per year, inside the spec's 1 to 3 GB estimate. The first ticker sweep, on 2026-11-02, took about 3 minutes per currency with no failures, and adds about 56 kB per currency per day.
 
 ## History backfill
 
