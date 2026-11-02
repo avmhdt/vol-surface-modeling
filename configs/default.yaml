@@ -88,6 +88,6 @@ tardis:
   min_free_gb: 100                 # pause below this on the drive holding the data
   free_space_path: /mnt/d
   crypto_status_path: ~/data/crypto-lob-alpha/status.json
-  max_ingest_p99_ratio: 2.0        # pause if crypto ingest p99 doubles from the run's start
+  max_ingest_p99_us: 1000          # pause above this on any venue; normal is 170 to 560
 viewer: {max_dates: 120, quote_dates: []}
 export: {schema: vsm.surface.v1, canonical: ssvi}

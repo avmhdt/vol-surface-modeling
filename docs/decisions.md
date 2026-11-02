@@ -94,7 +94,7 @@ Owner and agent decisions for this repo. Owner entries are copied from the portf
 
 ### M4
 
-- **Open, blocks the M4 exit: AC-H-04 needs at least 20 days.** Calibration already takes 0.11 s (BTC) and 0.10 s (ETH), but only one stored day exists. No threshold is changed. `tests/acceptance/test_ac_w_11_model_comparison.py` asserts the time and reports the day count as an expected failure until there are enough days. The recorder alone reaches 20 days around 2026-11-21. Free Tardis first-of-month files could reach it sooner, which means building that ingest ahead of M5.
+- **AC-H-04 needs at least 20 days, and FR-04 starts early to supply them; see M5.** Calibration already takes 0.11 s (BTC) and 0.10 s (ETH), but only one stored day exists. No threshold is changed. `tests/acceptance/test_ac_w_11_model_comparison.py` asserts the time and reports the day count as an expected failure until there are enough days. The recorder alone reaches 20 days around 2026-11-21.
 - **One line of AC-W-06 waits for M5:** flat surface gives flat local vol needs Dupire, which M5 builds.
 - **`cos_terms` 400 and `cos_truncation_L` 20, not the spec's 160 and 12.** R-09 expects COS terms to be tuned. At 160/12 the worst error against FFT on a 5 x 9 grid was 9.7e-5, over AC-W-06's 1e-6. At 256/16 it was 1.6e-6. At 400/20 it was 2.8e-8, and the gradient also meets AC-W-07. Cost is about 5.5 ms for price and gradient on 400 quotes. `heston_price_cos` defaults match. These are numerics settings, not acceptance thresholds.
 - **Two numerical repairs in the characteristic function and COS.** beta - d is written as -xi^2 (u^2 + iu) / (beta + d), and the logarithm uses log1p, because with small xi and large kappa the textbook form loses digits and the prefactor kappa theta / xi^2 amplifies that. OTM calls are priced under the stock measure, with characteristic function phi(u - i), because the usual call coefficients contain e^b (about 2e5 at high vol), and a call from put parity inherits the put's left-tail truncation error.
@@ -109,3 +109,14 @@ Owner and agent decisions for this repo. Owner entries are copied from the portf
 - **`pricer` is COS only.** The FFT pricer is a cross-check, since it has no gradient.
 - **FR-29, the JAX gradient cross-check, is not built.** It is a Could, and finite differences plus the Monte Carlo and quadrature checks cover it.
 - **The per-model comparison covers liquid quotes of each day.** SVI, SSVI and SABR use the same set. Heston uses the same selection, thinned to 400 quotes.
+
+### M5
+
+- **FR-04 starts early, by owner decision on 2026-11-02,** to supply the 20 days AC-H-04 needs. The owner's conditions: downloads capped at 10 MB/s in config, one file tested first, the bulk run only after the planned reboot at about 21:20 UTC on 2026-11-02, one file at a time, and a pause if the crypto recorder shows resyncs or its ingest p99 climbs, or if D: falls below 100 GB free. This covers free first-of-month files only. Paid Tardis stays not approved (D-02), and `vsm ingest tardis --mode range` refuses to run. No threshold changes.
+- **The guard checks between files, not during one,** because pausing an open stream risks the server dropping it. A file takes at most about 9 minutes at the cap.
+- **The p99 guard is a fixed ceiling of 1,000 us, not a ratio.** The first version paused at twice a single baseline sample. The recorder's p99 moves between about 170 and 560 us minute to minute on its own, for example from 425 to 232 us within 3 minutes on Kraken, so a ratio to one sample would stop on noise. The ceiling is about twice the highest value seen.
+- **`local_timestamp` is the stream's clock.** It was in order across the 103 million rows read; `timestamp` is not in order. Every file reports its count of steps backwards.
+- **Snapshots stay in `interim/tardis_snapshots/`,** only the rows DQ-15 selects, so no raw file is kept. `--keep-raw` writes what was read, which is only the start of a file.
+- **A Tardis snapshot has no futures file.** Forwards come from parity, or from `underlying_price` for short expiries. Spot, which is only reported as basis, is the last closed perpetual bar before as-of. As-of is the nominal 08:15, and staleness is DQ-15's 300 s.
+- **DQ-03's tick rule does not apply to old snapshots,** because expired instruments are not in the stored metadata. The IV-spread and relative-spread rules still apply.
+

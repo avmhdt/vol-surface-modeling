@@ -1,8 +1,8 @@
 {
-  "days": 1,
-  "median_day_svi": 0.9763779527559056,
-  "n_liquid": 254,
-  "pooled_ssvi": 0.48031496062992124,
-  "pooled_svi": 0.9763779527559056,
+  "days": 2,
+  "median_day_svi": 0.9818059976545486,
+  "n_liquid": 489,
+  "pooled_ssvi": 0.5460122699386503,
+  "pooled_svi": 0.9815950920245399,
   "underlying": "ETH"
 }

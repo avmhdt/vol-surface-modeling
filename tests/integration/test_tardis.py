@@ -248,9 +248,14 @@ def test_guard_pauses_on_a_new_resync(tmp_path: Path) -> None:
 
 def test_guard_pauses_when_ingest_p99_climbs(tmp_path: Path) -> None:
     guard, path = guard_for(tmp_path)
-    status_file(path, 3, 201.0)
+    status_file(path, 3, 1001.0)
     assert "p99" in str(guard.reason())
-    status_file(path, 3, 199.0)
+
+
+def test_guard_ignores_normal_variation_in_p99(tmp_path: Path) -> None:
+    # The recorder's p99 moves between 170 and 560 us minute to minute with no load at all.
+    guard, path = guard_for(tmp_path)
+    status_file(path, 3, 558.0)
     assert guard.reason() is None
 
 

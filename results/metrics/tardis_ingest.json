@@ -1,0 +1,14 @@
+{
+  "2026-10-01": {
+    "bytes_read": 5222957056,
+    "decompressed_bytes": 20986525444,
+    "inversions": 0,
+    "last_local_ts_us": 1790842835524210,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1800,
+    "rows_read": 102998772,
+    "seconds": 522.3658393900005,
+    "total_bytes": 17932604919
+  }
+}

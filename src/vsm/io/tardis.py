@@ -7,7 +7,8 @@ the stream counts every step backwards and reports the largest.
 
 Downloads are capped at ``tardis.max_bytes_per_second``, one file at a time. Between files
 ``IngestGuard`` pauses the run if free space falls below ``tardis.min_free_gb``, or if the crypto
-recorder, which shares this machine and its network link, shows resyncs or a higher ingest p99.
+recorder, which shares this machine and its network link, shows new resyncs or an ingest p99
+above ``tardis.max_ingest_p99_us``.
 Paid daily history is not approved (D-02), so nothing here uses an API key.
 """
 
@@ -144,12 +145,13 @@ class IngestGuard:
         if free_gb < self._cfg.min_free_gb:
             return f"free space {free_gb:.0f} GB is below {self._cfg.min_free_gb:.0f} GB"
         now = self._read_status()
-        if now is None or self._baseline is None:
+        if now is None:
             return None
-        if now[0] > self._baseline[0]:
+        if self._baseline is not None and now[0] > self._baseline[0]:
             return f"crypto recorder resyncs rose from {self._baseline[0]} to {now[0]}"
-        if self._baseline[1] and now[1] > self._baseline[1] * self._cfg.max_ingest_p99_ratio:
-            return f"crypto ingest p99 rose from {self._baseline[1]:.0f} to {now[1]:.0f} us"
+        if now[1] > self._cfg.max_ingest_p99_us:
+            limit = self._cfg.max_ingest_p99_us
+            return f"crypto ingest p99 is {now[1]:.0f} us, above {limit:.0f} us"
         return None
 
 

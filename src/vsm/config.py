@@ -177,7 +177,7 @@ class TardisConfig(BaseModel):
     min_free_gb: float = 100.0
     free_space_path: str = "/mnt/d"
     crypto_status_path: str = "~/data/crypto-lob-alpha/status.json"
-    max_ingest_p99_ratio: float = 2.0
+    max_ingest_p99_us: float = 1000.0
 
 
 class ExportConfig(BaseModel):
