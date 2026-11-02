@@ -216,14 +216,29 @@ def test_first_of_month_days() -> None:
     assert len(tardis.first_of_month_days(date(2020, 3, 1), date(2026, 10, 1))) == 80
 
 
-def status_file(path: Path, resyncs: int, p99: float, *, age_s: float = 0.0) -> str:
+def status_file(
+    path: Path,
+    resyncs: int,
+    p99: float,
+    *,
+    age_s: float = 0.0,
+    run: str = "run-1",
+    conns: tuple[str, ...] = ("market.g2", "public.g0", "ticker.g1"),
+    other_conns: tuple[str, ...] = ("ws.g0",),
+) -> str:
     import time
 
     status = {
         "ts_ns": time.time_ns() - int(age_s * 1e9),
+        "run": run,
         "stopped": False,
         "venues": {
-            "binance": {"ingest_us_p99": p99, "streams": [{"resyncs": resyncs}, {"resyncs": 0}]}
+            tardis.BINANCE_VENUE: {
+                "ingest_us_p99": p99,
+                "streams": [{"resyncs": resyncs}, {"resyncs": 0}],
+                "conns": list(conns),
+            },
+            "coinbase": {"ingest_us_p99": 100.0, "streams": [], "conns": list(other_conns)},
         },
     }
     path.write_text(json.dumps(status), encoding="utf-8")
@@ -253,6 +268,34 @@ def test_guard_pauses_when_ingest_p99_climbs(tmp_path: Path) -> None:
     guard, path = guard_for(tmp_path)
     status_file(path, 3, 1001.0)
     assert "p99" in str(guard.reason())
+
+
+def test_guard_pauses_on_a_binance_reconnect(tmp_path: Path) -> None:
+    guard, path = guard_for(tmp_path)
+    status_file(path, 3, 100.0, conns=("market.g3", "public.g0", "ticker.g1"))
+    assert "Binance reconnected" in str(guard.reason())
+
+
+def test_guard_remembers_a_reconnect_seen_only_after_the_socket_is_back(tmp_path: Path) -> None:
+    # A connection that is down right now just drops off the list, so the serial can dip.
+    guard, path = guard_for(tmp_path)
+    status_file(path, 3, 100.0, conns=("public.g0", "ticker.g1"))
+    assert guard.reason() is None
+    status_file(path, 3, 100.0, conns=("market.g3", "public.g0", "ticker.g1"))
+    assert "Binance reconnected" in str(guard.reason())
+
+
+def test_guard_ignores_reconnects_on_other_venues(tmp_path: Path) -> None:
+    guard, path = guard_for(tmp_path)
+    status_file(path, 3, 100.0, other_conns=("ws.g7",))
+    assert guard.reason() is None
+
+
+def test_guard_pauses_when_the_recorder_restarts(tmp_path: Path) -> None:
+    # Every counter starts again in a new run, so a quiet comparison would mean nothing.
+    guard, path = guard_for(tmp_path)
+    status_file(path, 0, 100.0, run="run-2", conns=("market.g0",))
+    assert "restarted" in str(guard.reason())
 
 
 def test_guard_ignores_normal_variation_in_p99(tmp_path: Path) -> None:
@@ -299,6 +342,35 @@ def test_run_waits_until_the_guard_clears(
     assert tardis.PAUSE_POLL_S in slept
     saved = json.loads((tmp_path / "results" / "metrics" / "tardis_ingest.json").read_text())
     assert saved["2026-10-01"]["rows_kept"] == 3
+
+
+def test_run_stops_when_asked_and_resumes_from_finished_days(
+    tmp_path: Path, config: TardisConfig, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    reasons = iter([None, "Binance reconnected"])
+    monkeypatch.setattr(tardis.IngestGuard, "reason", lambda self: next(reasons))
+    slept: list[float] = []
+    transport, _ = transport_for(body())
+    results = tmp_path / "results"
+    days = [DAY, date(2026, 11, 1)]
+    with (
+        httpx.Client(transport=transport) as client,
+        pytest.raises(tardis.IngestPaused, match="Binance reconnected"),
+    ):
+        tardis.ingest_months(
+            client,
+            tmp_path,
+            results,
+            "https://test.invalid/v1",
+            days,
+            "08:15",
+            config,
+            stop_on_pause=True,
+            sleep=slept.append,
+        )
+    assert tardis.PAUSE_POLL_S not in slept
+    saved = json.loads((results / "metrics" / "tardis_ingest.json").read_text())
+    assert list(saved) == ["2026-10-01"]
 
 
 def test_dropped_connection_retries_then_gives_up(tmp_path: Path, config: TardisConfig) -> None:
@@ -375,3 +447,38 @@ def test_cli_refuses_paid_ranges(monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     result = runner.invoke(cli.app, ["ingest", "tardis", "--mode", "range", *span])
     assert result.exit_code == 2
     assert "D-02" in result.output
+
+
+def test_cli_ingests_named_days(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    cli_setup(monkeypatch, tmp_path)
+    args = ["ingest", "tardis", "--mode", "first-of-month", "--days", "2026-10-01"]
+    result = runner.invoke(cli.app, args)
+    assert result.exit_code == 0, result.output
+    assert "1 of 1 days fetched" in result.output
+
+
+def test_cli_refuses_a_named_day_that_is_not_free(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    cli_setup(monkeypatch, tmp_path)
+    args = ["ingest", "tardis", "--mode", "first-of-month", "--days", "2026-10-01,2026-10-02"]
+    result = runner.invoke(cli.app, args)
+    assert result.exit_code == 2
+    assert "D-02" in result.output
+
+
+def test_cli_needs_days_or_a_full_span(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    cli_setup(monkeypatch, tmp_path)
+    args = ["ingest", "tardis", "--mode", "first-of-month", "--start", "2026-10-01"]
+    result = runner.invoke(cli.app, args)
+    assert result.exit_code == 2
+    assert "--days" in result.output
+
+
+def test_cli_stops_and_says_why(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    cli_setup(monkeypatch, tmp_path)
+    monkeypatch.setattr(tardis.IngestGuard, "reason", lambda self: "Binance reconnected")
+    args = ["ingest", "tardis", "--mode", "first-of-month", "--days", "2026-10-01"]
+    result = runner.invoke(cli.app, [*args, "--stop-on-pause"])
+    assert result.exit_code == 3
+    assert "Binance reconnected" in result.output
