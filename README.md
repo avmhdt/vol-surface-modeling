@@ -17,8 +17,8 @@
 - [x] Quote cleaning: drop zero bids and wide markets; use mid or bid/ask-weighted implied vol. (FR-07, FR-10)
 - [x] Implied forward and dividend or borrow from put–call parity for each expiry. (FR-08)
 - [x] A robust implied-vol solver (Jäckel’s ‘Let’s Be Rational’ or a safeguarded Newton/Brent). (FR-09)
-- [ ] Raw SVI per expiry plus a global SSVI fit (Gatheral and Jacquier 2014), with butterfly and calendar no-arbitrage enforced.
-- [ ] Arbitrage diagnostics: Durrleman’s g(k) ≥ 0, non-decreasing total variance, positive Breeden–Litzenberger density.
+- [x] Raw SVI per expiry plus a global SSVI fit (Gatheral and Jacquier 2014), with butterfly and calendar no-arbitrage enforced. (FR-11, FR-12)
+- [x] Arbitrage diagnostics: Durrleman’s g(k) ≥ 0, non-decreasing total variance, positive Breeden–Litzenberger density. (FR-13)
 - [ ] Model calibration: Heston via COS or Carr–Madan FFT, and SABR (Hagan) per expiry; compare fit error and stability.
 - [ ] A variance risk premium study: implied vs realized variance, and delta-hedged option P&L.
 

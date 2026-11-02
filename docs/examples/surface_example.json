@@ -1,0 +1,276 @@
+{
+  "schema": "vsm.surface.v1",
+  "underlying": "BTC",
+  "venue": "deribit",
+  "as_of": "2026-11-02T08:15:00Z",
+  "as_of_ns": 1793607300000000000,
+  "spot": {
+    "index_name": "btc_usd",
+    "value": 78000.0
+  },
+  "conventions": {
+    "option_style": "european",
+    "settlement": "inverse",
+    "premium_currency": "BTC",
+    "pricing": "undiscounted Black-76 on the expiry forward",
+    "year_fraction": "ACT/365 seconds",
+    "expiry_time_utc": "08:00:00",
+    "moneyness": "k = ln(K/F)",
+    "total_variance": "w = sigma^2 * t",
+    "coin_rate": "zero"
+  },
+  "canonical": "ssvi",
+  "ssvi": {
+    "phi": "power_law",
+    "rho": -0.2500508917667087,
+    "eta": 1.2125521537432329,
+    "gamma": 0.4460297547103423,
+    "lambda": null,
+    "theta_interpolation": "linear_in_t",
+    "t_nodes": [
+      0.008190639269406393,
+      0.019149543378995434,
+      0.03832762557077626,
+      0.08216324200913241,
+      0.16435502283105022,
+      0.24654680365296805,
+      0.49312214611872146
+    ],
+    "theta_nodes": [
+      0.002571659562045147,
+      0.005589282007423568,
+      0.010779167380189126,
+      0.022236586121822034,
+      0.046195675827599585,
+      0.07195158841280991,
+      0.15456107846643202
+    ]
+  },
+  "expiries": [
+    {
+      "expiry": "2026-11-05T08:00:00Z",
+      "expiry_ns": 1793865600000000000,
+      "t": 0.008190639269406393,
+      "forward": 78038.96866824386,
+      "forward_method": "parity_wls",
+      "forward_se": 0.6688427873284667,
+      "discount_factor": 1.0,
+      "basis_annualized": 0.060981021957467164,
+      "dividend_yield": null,
+      "svi_raw": {
+        "a": 0.0013200092601897814,
+        "b": 0.02186936986109796,
+        "rho": -0.255844476390762,
+        "m": 0.014116006382947905,
+        "sigma": 0.051351474884774075
+      },
+      "slice_source": "svi",
+      "k_range_quoted": [
+        -0.12600455530342716,
+        0.12692355736831018
+      ],
+      "fit": {
+        "n_quotes": 21,
+        "n_liquid": 16,
+        "rmse_iv_bp": 27.98803654731148,
+        "within_spread_frac": 1.0
+      }
+    },
+    {
+      "expiry": "2026-11-09T08:00:00Z",
+      "expiry_ns": 1794211200000000000,
+      "t": 0.019149543378995434,
+      "forward": 78089.89414092088,
+      "forward_method": "parity_wls",
+      "forward_se": 0.553293446473105,
+      "discount_factor": 1.0,
+      "basis_annualized": 0.060148973672836906,
+      "dividend_yield": null,
+      "svi_raw": {
+        "a": 0.0028057851333974284,
+        "b": 0.03384803816770431,
+        "rho": -0.261261722712345,
+        "m": 0.019140265642645326,
+        "sigma": 0.07421736858022274
+      },
+      "slice_source": "svi",
+      "k_range_quoted": [
+        -0.18655504871191267,
+        0.18649739452119216
+      ],
+      "fit": {
+        "n_quotes": 21,
+        "n_liquid": 17,
+        "rmse_iv_bp": 14.22321023765175,
+        "within_spread_frac": 1.0
+      }
+    },
+    {
+      "expiry": "2026-11-16T08:00:00Z",
+      "expiry_ns": 1794816000000000000,
+      "t": 0.03832762557077626,
+      "forward": 78179.5076598557,
+      "forward_method": "parity_wls",
+      "forward_se": 0.5236252118011059,
+      "discount_factor": 1.0,
+      "basis_annualized": 0.059975959918261226,
+      "dividend_yield": null,
+      "svi_raw": {
+        "a": 0.005430991922888059,
+        "b": 0.048154644370168434,
+        "rho": -0.25445655892497715,
+        "m": 0.02820539115466172,
+        "sigma": 0.0995473924493421
+      },
+      "slice_source": "svi",
+      "k_range_quoted": [
+        -0.25967545909144685,
+        0.25907884843005097
+      ],
+      "fit": {
+        "n_quotes": 21,
+        "n_liquid": 16,
+        "rmse_iv_bp": 13.342105061167715,
+        "within_spread_frac": 1.0
+      }
+    },
+    {
+      "expiry": "2026-12-02T08:00:00Z",
+      "expiry_ns": 1796198400000000000,
+      "t": 0.08216324200913241,
+      "forward": 78385.08279531448,
+      "forward_method": "parity_wls",
+      "forward_se": 0.678846473815454,
+      "discount_factor": 1.0,
+      "basis_annualized": 0.05993935943488702,
+      "dividend_yield": null,
+      "svi_raw": {
+        "a": 0.0099305782275939,
+        "b": 0.07395745406702155,
+        "rho": -0.24577317322573186,
+        "m": 0.03767079711473588,
+        "sigma": 0.15248044922375278
+      },
+      "slice_source": "svi",
+      "k_range_quoted": [
+        -0.3726495922204383,
+        0.3728088829075179
+      ],
+      "fit": {
+        "n_quotes": 21,
+        "n_liquid": 16,
+        "rmse_iv_bp": 10.2925927989143,
+        "within_spread_frac": 1.0
+      }
+    },
+    {
+      "expiry": "2027-01-01T08:00:00Z",
+      "expiry_ns": 1798790400000000000,
+      "t": 0.16435502283105022,
+      "forward": 78775.73009139401,
+      "forward_method": "parity_wls",
+      "forward_se": 0.45994414517810533,
+      "discount_factor": 1.0,
+      "basis_annualized": 0.06021190469219025,
+      "dividend_yield": null,
+      "svi_raw": {
+        "a": 0.021168564508820358,
+        "b": 0.10836569545755864,
+        "rho": -0.25156968478971853,
+        "m": 0.051513575063122985,
+        "sigma": 0.21186350602008436
+      },
+      "slice_source": "svi",
+      "k_range_quoted": [
+        -0.5379635591708827,
+        0.5371872428182289
+      ],
+      "fit": {
+        "n_quotes": 21,
+        "n_liquid": 16,
+        "rmse_iv_bp": 7.24396219568157,
+        "within_spread_frac": 1.0
+      }
+    },
+    {
+      "expiry": "2027-01-31T08:00:00Z",
+      "expiry_ns": 1801382400000000000,
+      "t": 0.24654680365296805,
+      "forward": 79162.55399584476,
+      "forward_method": "parity_wls",
+      "forward_se": 1.213295093439438,
+      "discount_factor": 1.0,
+      "basis_annualized": 0.06000709407786156,
+      "dividend_yield": null,
+      "svi_raw": {
+        "a": 0.03471497750667351,
+        "b": 0.13456933635256155,
+        "rho": -0.24882968627005653,
+        "m": 0.06738635308990353,
+        "sigma": 0.25095323370079425
+      },
+      "slice_source": "svi",
+      "k_range_quoted": [
+        -0.6702014098184979,
+        0.6706305772246354
+      ],
+      "fit": {
+        "n_quotes": 21,
+        "n_liquid": 17,
+        "rmse_iv_bp": 8.086620174308258,
+        "within_spread_frac": 1.0
+      }
+    },
+    {
+      "expiry": "2027-05-01T08:00:00Z",
+      "expiry_ns": 1809158400000000000,
+      "t": 0.49312214611872146,
+      "forward": 80344.45165806665,
+      "forward_method": "parity_wls",
+      "forward_se": 1.736602167865843,
+      "discount_factor": 1.0,
+      "basis_annualized": 0.06005451422510268,
+      "dividend_yield": null,
+      "svi_raw": {
+        "a": 0.07191180902609821,
+        "b": 0.1994358225644188,
+        "rho": -0.24824442173826422,
+        "m": 0.09823080548030837,
+        "sigma": 0.37756845892835733
+      },
+      "slice_source": "svi",
+      "k_range_quoted": [
+        -0.9817978658735615,
+        0.9829186672563437
+      ],
+      "fit": {
+        "n_quotes": 21,
+        "n_liquid": 16,
+        "rmse_iv_bp": 4.192062549843927,
+        "within_spread_frac": 1.0
+      }
+    }
+  ],
+  "arbitrage": {
+    "passed": true,
+    "min_g": 0.30917500622574784,
+    "min_calendar_dw": 0.002734103759746053,
+    "density_mass_max_err": 1.0251530735416736e-09,
+    "grid": {
+      "z_min": -6.0,
+      "z_max": 6.0,
+      "n": 1201
+    }
+  },
+  "heston": null,
+  "sabr": [],
+  "local_vol": null,
+  "provenance": {
+    "vsm_version": "0.1.0",
+    "git_sha": "synthetic",
+    "config_hash": "synthetic",
+    "snapshot_id": "deribit-BTC-20261102T0815Z",
+    "created_at": "2026-11-02T08:21:00Z",
+    "producer": "vol-surface-modeling"
+  }
+}

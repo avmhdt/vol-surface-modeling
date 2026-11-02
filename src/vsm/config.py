@@ -91,6 +91,62 @@ class LiquidConfig(BaseModel):
     min_days_to_expiry: float = 2.0
 
 
+class SviConfig(BaseModel):
+    """Raw SVI slice fit."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    init: Literal["quasi_explicit", "ssvi_slice"] = "quasi_explicit"
+    weights: Literal["inverse_spread", "vega", "uniform"] = "inverse_spread"
+    lee_bound: bool = True
+    wing_anchor_weight: float = Field(default=1.0e-3, ge=0.0)
+
+
+class SsviConfig(BaseModel):
+    """Global SSVI fit. Only the power-law phi is built."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    phi: Literal["power_law"] = "power_law"
+
+
+class GridZ(BaseModel):
+    """Check grid in z = k / sqrt(theta)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    min: float = -6.0
+    max: float = 6.0
+    n: int = 1201
+
+
+class ArbitrageConfig(BaseModel):
+    """Static-arbitrage gate. Tolerances here are never relaxed to pass a day (rule 13)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    grid_z: GridZ = GridZ()
+    tol_g: float = 1.0e-12
+    tol_calendar: float = 1.0e-12
+    tol_density_mass: float = 1.0e-3
+    tol_density_mean: float = 1.0e-4
+    tol_price: float = 1.0e-9
+    fallback: list[Literal["constrained_refit", "ssvi_slice", "drop"]] = [
+        "constrained_refit",
+        "ssvi_slice",
+        "drop",
+    ]
+
+
+class ExportConfig(BaseModel):
+    """Surface export contract."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    schema_name: str = Field(default="vsm.surface.v1", alias="schema")
+    canonical: Literal["ssvi"] = "ssvi"
+
+
 class AppConfig(BaseModel):
     """Top-level config. Sections no milestone has typed yet pass through unchanged."""
 
@@ -106,6 +162,10 @@ class AppConfig(BaseModel):
     forwards: ForwardsConfig = ForwardsConfig()
     iv: IvConfig = IvConfig()
     liquid: LiquidConfig = LiquidConfig()
+    svi: SviConfig = SviConfig()
+    ssvi: SsviConfig = SsviConfig()
+    arbitrage: ArbitrageConfig = ArbitrageConfig()
+    export: ExportConfig = ExportConfig()
 
     def results_dir(self) -> Path:
         """Absolute results directory."""

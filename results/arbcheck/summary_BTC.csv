@@ -1,0 +1,2 @@
+date,snapshot,passed,slices,fit_svi,fallback_constrained,fallback_ssvi,dropped,failed_slices_after_fallback,min_g,min_calendar_dw,density_mass_max_err
+2026-11-01,20261101T2215Z,true,11,11,0,0,0,0,0.1186033045674371,0.00015639391028554085,1.3229032880257563e-7
