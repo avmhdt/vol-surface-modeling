@@ -82,6 +82,22 @@ Projected reads at 29.1% of each file. Early files may differ, since the share d
 
 Only about 1,800 rows per file are kept, so disk use is under 1 MB per day.
 
+The bulk run goes in stages, because the owner wants each one's effect on the crypto capture checked before the next. The smallest 20 files are not consecutive months, so `--days` names them:
+
+```bash
+vsm ingest tardis --mode first-of-month --stop-on-pause --days 2020-03-01,2020-04-01,...
+```
+
+With `--stop-on-pause` the command exits with code 3 when the guard trips, rather than waiting, and the same command resumes it. The guard checks between files, and it trips on any of:
+
+- Free space on D: below 100 GB.
+- A new crypto recorder run.
+- A new resync.
+- A new Binance connection.
+- An ingest p99 above 1,000 us on any venue.
+
+The recorder's planned connection rotation every 23 hours also counts as a new Binance connection, so a run that crosses one stops and has to be resumed.
+
 ## Datasets
 
 ```text

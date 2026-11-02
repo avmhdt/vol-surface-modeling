@@ -18,7 +18,7 @@ from vsm.io import recorder
 from vsm.io.deribit import DeribitClient
 from vsm.io.history import ingest_history
 from vsm.io.smoke import run_smoke
-from vsm.io.tardis import first_of_month_days, ingest_months
+from vsm.io.tardis import IngestPaused, first_of_month_days, ingest_months
 from vsm.logs import configure_logging
 from vsm.models.runner import calibrate_heston_day, calibrate_sabr_day, refresh_comparison
 from vsm.pipeline import ALL_STEPS, export_day, recheck_day, refresh_outputs, run_day
@@ -342,30 +342,50 @@ def ingest_instruments(
 @ingest_app.command("tardis")
 def ingest_tardis(
     mode: Annotated[str, typer.Option("--mode", help="first-of-month")],
-    start: Annotated[str, typer.Option("--start", help="YYYY-MM-DD")],
-    end: Annotated[str, typer.Option("--end", help="YYYY-MM-DD")],
+    start: Annotated[str | None, typer.Option("--start", help="YYYY-MM-DD")] = None,
+    end: Annotated[str | None, typer.Option("--end", help="YYYY-MM-DD")] = None,
+    days_csv: Annotated[
+        str | None, typer.Option("--days", help="First-of-month days, instead of a span.")
+    ] = None,
     at: Annotated[str, typer.Option("--at", help="HH:MM UTC.")] = "08:15",
     keep_raw: Annotated[bool, typer.Option("--keep-raw")] = False,
+    stop_on_pause: Annotated[
+        bool, typer.Option("--stop-on-pause", help="Exit when the guard trips, rather than wait.")
+    ] = False,
 ) -> None:
     """Free first-of-month files to snapshots, rate-capped, one file at a time."""
     if mode != "first-of-month":
         typer.echo("only first-of-month is approved; paid daily history needs D-02")
         raise typer.Exit(code=2)
+    if days_csv is not None:
+        days = [date.fromisoformat(value) for value in _split(days_csv)]
+    elif start is not None and end is not None:
+        days = first_of_month_days(date.fromisoformat(start), date.fromisoformat(end))
+    else:
+        typer.echo("give --days, or both --start and --end")
+        raise typer.Exit(code=2)
+    if any(day.day != 1 for day in days):
+        typer.echo("only first-of-month is approved; paid daily history needs D-02")
+        raise typer.Exit(code=2)
     settings = Settings()
     config = load_config()
     configure_logging(settings.log_level, as_json=settings.log_json)
-    days = first_of_month_days(date.fromisoformat(start), date.fromisoformat(end))
     with _tardis_client() as client:
-        done = ingest_months(
-            client,
-            settings.data_dir,
-            config.results_dir(),
-            settings.tardis_datasets_url,
-            days,
-            at,
-            config.tardis,
-            keep_raw=keep_raw or config.tardis.keep_raw,
-        )
+        try:
+            done = ingest_months(
+                client,
+                settings.data_dir,
+                config.results_dir(),
+                settings.tardis_datasets_url,
+                days,
+                at,
+                config.tardis,
+                keep_raw=keep_raw or config.tardis.keep_raw,
+                stop_on_pause=stop_on_pause,
+            )
+        except IngestPaused as exc:
+            typer.echo(f"stopped: {exc}. Finished days are in tardis_ingest.json.")
+            raise typer.Exit(code=3) from exc
     for stats in done:
         typer.echo(
             f"{stats.date}: read {stats.bytes_read / 1e9:.2f} of {stats.total_bytes / 1e9:.2f} GB "

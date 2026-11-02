@@ -7,8 +7,8 @@ the stream counts every step backwards and reports the largest.
 
 Downloads are capped at ``tardis.max_bytes_per_second``, one file at a time. Between files
 ``IngestGuard`` pauses the run if free space falls below ``tardis.min_free_gb``, or if the crypto
-recorder, which shares this machine and its network link, shows new resyncs or an ingest p99
-above ``tardis.max_ingest_p99_us``.
+recorder, which shares this machine and its network link, restarts, shows new resyncs, opens a new
+Binance connection, or reports an ingest p99 above ``tardis.max_ingest_p99_us``.
 Paid daily history is not approved (D-02), so nothing here uses an API key.
 """
 
@@ -38,6 +38,7 @@ UNDERLYINGS = ("BTC", "ETH")
 CONNECT_RETRIES = 3
 PAUSE_POLL_S = 300.0
 STATUS_MAX_AGE_NS = 300_000_000_000
+BINANCE_VENUE = "binance-usdm"
 
 CSV_SCHEMA: dict[str, pl.DataType | type[pl.DataType]] = {
     "exchange": pl.String,
@@ -111,6 +112,26 @@ class ByteRateLimiter:
             self._sleep(due - elapsed)
 
 
+class IngestPaused(RuntimeError):
+    """The guard held the run back and the caller asked to stop rather than wait."""
+
+
+@dataclass(frozen=True)
+class CryptoHealth:
+    """What the guard reads from the crypto recorder's status file."""
+
+    run: str
+    resyncs: int
+    ingest_p99_us: float
+    binance_connection: int
+
+
+def _connection_serial(conn_ids: list[str]) -> int:
+    """Highest ``<name>.g<n>``: a venue's ``n`` counts every connection its run has opened."""
+    serials = [conn_id.rsplit(".g", 1)[-1] for conn_id in conn_ids]
+    return max((int(serial) for serial in serials if serial.isdigit()), default=0)
+
+
 class IngestGuard:
     """Why the bulk run should wait right now, if at all."""
 
@@ -119,8 +140,8 @@ class IngestGuard:
         self._status = Path(cfg.crypto_status_path).expanduser()
         self._baseline = self._read_status()
 
-    def _read_status(self) -> tuple[int, float] | None:
-        """(total resyncs, worst ingest p99 in us) from a live crypto recorder, else None."""
+    def _read_status(self) -> CryptoHealth | None:
+        """Counters from a live crypto recorder, else None."""
         if not self._status.exists():
             return None
         try:
@@ -137,7 +158,13 @@ class IngestGuard:
         for venue in status.get("venues", {}).values():
             worst = max(worst, float(venue.get("ingest_us_p99") or 0.0))
             resyncs += sum(int(s.get("resyncs", 0)) for s in venue.get("streams", []))
-        return resyncs, worst
+        binance = status.get("venues", {}).get(BINANCE_VENUE, {})
+        return CryptoHealth(
+            run=str(status.get("run", "")),
+            resyncs=resyncs,
+            ingest_p99_us=worst,
+            binance_connection=_connection_serial(binance.get("conns", [])),
+        )
 
     def reason(self) -> str | None:
         """The condition holding the run back, or None when it may continue."""
@@ -147,11 +174,21 @@ class IngestGuard:
         now = self._read_status()
         if now is None:
             return None
-        if self._baseline is not None and now[0] > self._baseline[0]:
-            return f"crypto recorder resyncs rose from {self._baseline[0]} to {now[0]}"
-        if now[1] > self._cfg.max_ingest_p99_us:
+        base = self._baseline
+        if base is not None:
+            # A new run restarts every counter, so nothing else can be compared across one.
+            if now.run != base.run:
+                return f"crypto recorder restarted, run {base.run} to {now.run}"
+            if now.resyncs > base.resyncs:
+                return f"crypto recorder resyncs rose from {base.resyncs} to {now.resyncs}"
+            if now.binance_connection > base.binance_connection:
+                return (
+                    "Binance reconnected, connection serial rose from "
+                    f"{base.binance_connection} to {now.binance_connection}"
+                )
+        if now.ingest_p99_us > self._cfg.max_ingest_p99_us:
             limit = self._cfg.max_ingest_p99_us
-            return f"crypto ingest p99 is {now[1]:.0f} us, above {limit:.0f} us"
+            return f"crypto ingest p99 is {now.ingest_p99_us:.0f} us, above {limit:.0f} us"
         return None
 
 
@@ -409,14 +446,20 @@ def ingest_months(
     cfg: TardisConfig,
     *,
     keep_raw: bool = False,
+    stop_on_pause: bool = False,
     sleep: Callable[[float], None] = time.sleep,
 ) -> list[IngestStats]:
-    """Extract days one at a time, waiting whenever the guard holds the run back."""
+    """Extract days one at a time; when the guard holds the run back, wait, or stop if asked.
+
+    The same command resumes a stopped run, because finished days are skipped.
+    """
     guard = IngestGuard(cfg)
     done = []
     for day in days:
         while (reason := guard.reason()) is not None:
             log.warning("tardis_paused", reason=reason, day=day.isoformat())
+            if stop_on_pause:
+                raise IngestPaused(reason)
             sleep(PAUSE_POLL_S)
         for attempt in range(CONNECT_RETRIES):
             try:
