@@ -235,6 +235,7 @@ def _fit_day(
     _write_arbcheck(config, _arbcheck(gated, stamp, label, spline_baseline.evaluate(result.quotes)))
     exported = report.passed and "export" in steps
     if exported:
+        heston, sabr = model_blocks(data_dir, underlying, gated.snapshot_id, config.sabr.beta)
         write_surface_bundle(
             gated,
             str(data_dir / "exports"),
@@ -242,6 +243,8 @@ def _fit_day(
             coin_rate=config.conventions.coin_rate,
             git_sha=sha,
             config_hash=digest,
+            heston=heston,
+            sabr=sabr,
         )
     if not report.passed:
         log.warning("gate_failed", underlying=underlying, date=stamp)

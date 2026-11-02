@@ -68,6 +68,16 @@ def test_export_gains_the_model_blocks(stored: Path, config: AppConfig) -> None:
     assert {entry["beta"] for entry in document["sabr"]} == {1.0}
 
 
+def test_rebuilding_a_day_keeps_its_stored_fits(stored: Path, config: AppConfig) -> None:
+    runner.calibrate_heston_day(stored, config, "BTC", DAY)
+    runner.calibrate_sabr_day(stored, config, "BTC", DAY)
+    assert pipeline.run_day(stored, config, "BTC", DAY) is not None
+    bundle_path = stored / "exports" / "BTC" / LABEL / "surface.json"
+    document = read_surface_bundle(str(bundle_path)).document
+    assert document["heston"] is not None
+    assert len(document["sabr"]) >= 5
+
+
 def test_comparison_table_covers_all_models(stored: Path, config: AppConfig) -> None:
     runner.calibrate_heston_day(stored, config, "BTC", DAY)
     runner.calibrate_sabr_day(stored, config, "BTC", DAY)
