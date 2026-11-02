@@ -40,8 +40,8 @@ Raw and licensed data live in `data/`, which is git-ignored. Only download scrip
 ### Works (correct and reproducible)
 
 - [x] The IV solver round-trips price → vol → price to 1e-10 across moneyness, deep wings included. (AC-W-01, as amended by the owner for ITM points)
-- [ ] Zero static-arbitrage violations in fitted surfaces, checked automatically for every day.
-- [ ] Fit error falls inside the bid–ask spread for over 90% of liquid quotes.
+- [x] Zero static-arbitrage violations in fitted surfaces, checked automatically for every day. (AC-W-02, on all recorded days so far)
+- [x] Fit error falls inside the bid–ask spread for over 90% of liquid quotes. (AC-W-03, on all recorded days so far)
 
 ### Impresses hirers
 
