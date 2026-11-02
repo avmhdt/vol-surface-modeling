@@ -81,6 +81,13 @@ straddle:
   hedge: {instrument: perpetual, rebalance: daily, delta: entry_iv}
   costs: {fee_table: configs/fees/deribit.yaml, option_fill: bid_ask, hedge_slippage_bps: 2.0}
   bootstrap: {n: 10000, method: stationary, mean_block: 3, seed: 7}
-tardis: {keep_raw: false, window_utc: ["07:45", "08:20"]}
+tardis:
+  keep_raw: false
+  window_utc: ["07:45", "08:20"]
+  max_bytes_per_second: 10000000   # owner's cap, 10 MB/s
+  min_free_gb: 100                 # pause below this on the drive holding the data
+  free_space_path: /mnt/d
+  crypto_status_path: ~/data/crypto-lob-alpha/status.json
+  max_ingest_p99_ratio: 2.0        # pause if crypto ingest p99 doubles from the run's start
 viewer: {max_dates: 120, quote_dates: []}
 export: {schema: vsm.surface.v1, canonical: ssvi}

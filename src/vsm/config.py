@@ -166,6 +166,20 @@ class SabrConfig(BaseModel):
     obloj_correction: bool = False
 
 
+class TardisConfig(BaseModel):
+    """Free first-of-month ingest. The rate cap and guards are the owner's conditions."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    keep_raw: bool = False
+    window_utc: tuple[str, str] = ("07:45", "08:20")
+    max_bytes_per_second: float = Field(default=10_000_000.0, gt=0)
+    min_free_gb: float = 100.0
+    free_space_path: str = "/mnt/d"
+    crypto_status_path: str = "~/data/crypto-lob-alpha/status.json"
+    max_ingest_p99_ratio: float = 2.0
+
+
 class ExportConfig(BaseModel):
     """Surface export contract."""
 
@@ -195,6 +209,7 @@ class AppConfig(BaseModel):
     arbitrage: ArbitrageConfig = ArbitrageConfig()
     heston: HestonConfig = HestonConfig()
     sabr: SabrConfig = SabrConfig()
+    tardis: TardisConfig = TardisConfig()
     export: ExportConfig = ExportConfig()
 
     def results_dir(self) -> Path:
