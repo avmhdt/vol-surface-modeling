@@ -53,6 +53,18 @@ Endpoint behaviour found while backfilling:
 - Early funding records have null fields, so all four numeric columns are nullable.
 - `get_instruments` with `expired=true` returns only recent expiries (62 BTC options on 2026-11-01), so older instruments cannot be recovered. Strike, expiry and type for old snapshots are safe because the recorder stores them on each row.
 
+## Tardis first-of-month files
+
+Checked on 2026-11-02. The grouped symbol `OPTIONS` lists `options_chain`, and the docs say first-of-month files need no key. `HEAD` returns 404 on these URLs, though a ranged `GET` works, so sizes come from `Content-Range`:
+
+| File | Compressed size |
+|---|---|
+| 2020-03-01 | 0.54 GB |
+| 2024-06-01 | 2.35 GB |
+| 2026-10-01 | 17.9 GB |
+
+These are larger than the spec expected. If rows are in time order, the stream can stop after the 07:45 to 08:20 UTC window, reading about a third of a file and writing none of it to disk. That ordering has not been checked yet.
+
 ## Datasets
 
 ```text

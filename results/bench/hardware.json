@@ -1,5 +1,6 @@
 {
   "cpu": "Intel(R) Core(TM) i9-14900K",
   "logical_cores": 32,
-  "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35"
+  "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "ram_gb": 67.3
 }

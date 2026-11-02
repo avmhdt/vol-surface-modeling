@@ -3,11 +3,12 @@
 import math
 from dataclasses import replace
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import polars as pl
 
-from vsm.conventions import year_fraction
+from vsm.conventions import ns_to_datetime, year_fraction
 from vsm.io import storage
 from vsm.surface.ssvi import SSVI
 from vsm.surface.svi import RawSVI
@@ -26,6 +27,53 @@ def params_path(data_dir: Path, underlying: str) -> Path:
 def export_params_path(data_dir: Path, underlying: str) -> Path:
     """Consumer history: gated surfaces only."""
     return data_dir / "exports" / underlying / "surface_params.parquet"
+
+
+def heston_path(data_dir: Path, underlying: str) -> Path:
+    """Heston fits, one row per snapshot and variant."""
+    root = data_dir / "processed" / "model_params" / f"underlying={underlying}"
+    return root / "heston_params.parquet"
+
+
+def sabr_path(data_dir: Path, underlying: str) -> Path:
+    """SABR fits, one row per snapshot, expiry and beta."""
+    root = data_dir / "processed" / "model_params" / f"underlying={underlying}"
+    return root / "sabr_params.parquet"
+
+
+def model_blocks(
+    data_dir: Path, underlying: str, snapshot_id: str, beta: float
+) -> tuple[dict[str, Any] | None, list[dict[str, Any]]]:
+    """The ``heston`` and ``sabr`` blocks of an export, if those fits exist."""
+    heston: dict[str, Any] | None = None
+    path = heston_path(data_dir, underlying)
+    if path.exists():
+        rows = pl.read_parquet(path).filter(
+            (pl.col("snapshot_id") == snapshot_id) & (pl.col("variant") == "all")
+        )
+        if rows.height:
+            row = rows.row(0, named=True)
+            heston = {
+                name: row[name]
+                for name in ("v0", "kappa", "theta", "xi", "rho", "rmse_iv_bp", "converged")
+            }
+    sabr: list[dict[str, Any]] = []
+    path = sabr_path(data_dir, underlying)
+    if path.exists():
+        rows = pl.read_parquet(path).filter(
+            (pl.col("snapshot_id") == snapshot_id) & (pl.col("beta") == beta)
+        )
+        sabr = [
+            {
+                "expiry": ns_to_datetime(row["expiry_ns"]).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "alpha": row["alpha"],
+                "beta": row["beta"],
+                "rho": row["rho"],
+                "nu": row["nu"],
+            }
+            for row in rows.sort("expiry_ns").iter_rows(named=True)
+        ]
+    return heston, sabr
 
 
 def surface_rows(surface: Surface, git_sha: str, config_hash: str) -> pl.DataFrame:

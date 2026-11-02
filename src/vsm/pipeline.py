@@ -25,6 +25,7 @@ from vsm.surface.stability import stability_metrics, within_spread_metrics
 from vsm.surface.store import (
     DROPPED,
     load_surface,
+    model_blocks,
     params_path,
     store_surface,
     with_report,
@@ -260,7 +261,7 @@ def read_params(data_dir: Path, underlying: str) -> pl.DataFrame:
     return pl.read_parquet(path)
 
 
-def _stored_rows(
+def stored_rows(
     data_dir: Path, config: AppConfig, underlying: str, day: date
 ) -> pl.DataFrame | None:
     """Stored rows of one date: the canonical snapshot if there, else the latest."""
@@ -278,7 +279,7 @@ def _stored_rows(
 
 def recheck_day(data_dir: Path, config: AppConfig, underlying: str, day: date) -> ArbReport | None:
     """Re-run the gate on a stored surface, without refitting."""
-    rows = _stored_rows(data_dir, config, underlying, day)
+    rows = stored_rows(data_dir, config, underlying, day)
     if rows is None:
         return None
     return check_surface(load_surface(rows), config.arbitrage)
@@ -286,11 +287,12 @@ def recheck_day(data_dir: Path, config: AppConfig, underlying: str, day: date) -
 
 def export_day(data_dir: Path, config: AppConfig, underlying: str, day: date) -> str | None:
     """Re-write a stored surface's bundle. Raises if it does not pass the gate."""
-    rows = _stored_rows(data_dir, config, underlying, day)
+    rows = stored_rows(data_dir, config, underlying, day)
     if rows is None:
         return None
     surface = load_surface(rows)
     gated = with_report(surface, check_surface(surface, config.arbitrage))
+    heston, sabr = model_blocks(data_dir, underlying, surface.snapshot_id, config.sabr.beta)
     return write_surface_bundle(
         gated,
         str(data_dir / "exports"),
@@ -298,6 +300,8 @@ def export_day(data_dir: Path, config: AppConfig, underlying: str, day: date) ->
         coin_rate=config.conventions.coin_rate,
         git_sha=str(rows["git_sha"][0]),
         config_hash=str(rows["config_hash"][0]),
+        heston=heston,
+        sabr=sabr,
     )
 
 
@@ -382,7 +386,7 @@ def _rnd_table(params: pl.DataFrame, config: AppConfig, underlying: str) -> pl.D
     return table
 
 
-def _latest_clean(data_dir: Path, underlying: str, label: str) -> pl.DataFrame | None:
+def clean_quotes_of(data_dir: Path, underlying: str, label: str) -> pl.DataFrame | None:
     day = recorder.label_time(label).strftime("%Y-%m-%d")
     path = (
         data_dir
@@ -411,7 +415,7 @@ def _draft_figures(
         return  # the spec has one spline figure, for the first underlying
     latest = params.filter(pl.col("as_of_ns") == pl.col("as_of_ns").max())
     label = str(latest["snapshot_id"][0]).rsplit("-", 1)[1]
-    quotes = _latest_clean(data_dir, underlying, label)
+    quotes = clean_quotes_of(data_dir, underlying, label)
     if quotes is None:
         return
     splines = spline_baseline.spline_slices(quotes)

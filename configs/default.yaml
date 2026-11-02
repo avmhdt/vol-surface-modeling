@@ -54,9 +54,9 @@ arbitrage:
   tol_price: 1.0e-9              # call prices in units of F, for rounding in the wings
   fallback: [constrained_refit, ssvi_slice, drop]
 heston:
-  pricer: cos                    # cos | fft
-  cos_terms: 160
-  cos_truncation_L: 12
+  pricer: cos                    # the FFT pricer is a cross-check only
+  cos_terms: 400                 # spec default 160; see docs/decisions.md, M4
+  cos_truncation_L: 20           # spec default 12
   optimizer: lm                  # lm | trf
   init: {v0: 0.36, kappa: 2.0, theta: 0.36, xi: 1.0, rho: -0.2}
   bounds: {v0: [1.0e-4, 4.0], kappa: [1.0e-3, 50.0], theta: [1.0e-4, 4.0], xi: [1.0e-3, 10.0], rho: [-0.999, 0.999]}

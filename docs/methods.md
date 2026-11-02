@@ -41,6 +41,16 @@ A natural cubic spline of mid IV in k goes through the same checks. It fits ever
 
 The risk-neutral density of k is g(k)/√(2πw) · exp(−d₂²/2), so g(k) ≥ 0 is the condition for a non-negative density. It is also why g is the denominator of Dupire local vol. Skew in the smile tilts this density: a negative 25-delta risk reversal goes with negative skewness of ln(S_T/F). Moments use the anchored wings, so they are model values beyond the quotes.
 
+## Heston
+
+The characteristic function uses the "little trap" form, which stays on the principal branch of the logarithm, rewritten so nothing cancels when xi is small and kappa large. The COS pricer expands the density of ln(S_T/F) on one interval, and each strike integrates its own bounded payoff: puts under the pricing measure, calls under the stock measure. Calibration fits all expiries jointly on vega-scaled price residuals, close to IV errors in units of the spread, with an analytic Jacobian.
+
+Heston cannot produce the steep smiles of short crypto expiries: variance moves too slowly from v0 to bend a 2-day smile. On the first real day its IV RMSE was 152 bp for BTC and 286 bp for ETH, against 22 and 28 bp for SVI. Leaving out expiries under 7 days cut BTC to 63 bp and ETH to 120 bp.
+
+## SABR
+
+SABR is Hagan's expansion per expiry with beta fixed at 1 (D-05). It fits one expiry at a time, so it does far better than Heston on these smiles, close to SVI on the first real day, but its slices have no arbitrage guarantee and no link across expiries. Beta 0.5 fit better on that day, 19 bp against 26 bp across slices, and the sensitivity table tracks this.
+
 ### Limit on ITM vols
 
 An ITM price is intrinsic plus time value, so the time value is known only to about one ulp of the whole price. Where vega is tiny, that ulp moves vol by more than the 1e-10 target, and no solver can recover it. From the OTM price at the same point the vol round-trips to 1.8e-15. This is why the pipeline fits OTM quotes, and why the owner amended AC-W-01 to require the ITM vol round-trip only where the input price can resolve it (`docs/decisions.md`).

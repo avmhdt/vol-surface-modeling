@@ -138,6 +138,34 @@ class ArbitrageConfig(BaseModel):
     ]
 
 
+class HestonConfig(BaseModel):
+    """COS pricing and calibration. COS is the only pricer that has a gradient."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    pricer: Literal["cos"] = "cos"
+    cos_terms: int = 400
+    cos_truncation_L: float = 20.0
+    optimizer: Literal["lm", "trf"] = "lm"
+    init: dict[str, float] = {"v0": 0.36, "kappa": 2.0, "theta": 0.36, "xi": 1.0, "rho": -0.2}
+    bounds: dict[str, tuple[float, float]] = {
+        "v0": (1.0e-4, 4.0),
+        "kappa": (1.0e-3, 50.0),
+        "theta": (1.0e-4, 4.0),
+        "xi": (1.0e-3, 10.0),
+        "rho": (-0.999, 0.999),
+    }
+
+
+class SabrConfig(BaseModel):
+    """SABR per expiry; beta is fixed (D-05)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    beta: float = 1.0
+    obloj_correction: bool = False
+
+
 class ExportConfig(BaseModel):
     """Surface export contract."""
 
@@ -165,6 +193,8 @@ class AppConfig(BaseModel):
     svi: SviConfig = SviConfig()
     ssvi: SsviConfig = SsviConfig()
     arbitrage: ArbitrageConfig = ArbitrageConfig()
+    heston: HestonConfig = HestonConfig()
+    sabr: SabrConfig = SabrConfig()
     export: ExportConfig = ExportConfig()
 
     def results_dir(self) -> Path:

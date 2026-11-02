@@ -152,6 +152,40 @@ SURFACE_PARAMS_SCHEMA: dict[str, pl.DataType | type[pl.DataType]] = {
     "config_hash": pl.String,
 }
 
+HESTON_PARAMS_SCHEMA: dict[str, pl.DataType | type[pl.DataType]] = {
+    "snapshot_id": pl.String,
+    "as_of_ns": pl.Int64,
+    "variant": pl.String,
+    "v0": pl.Float64,
+    "kappa": pl.Float64,
+    "theta": pl.Float64,
+    "xi": pl.Float64,
+    "rho": pl.Float64,
+    "rmse_iv_bp": pl.Float64,
+    "within_spread_frac": pl.Float64,
+    "max_error_bp": pl.Float64,
+    "n_quotes": pl.Int32,
+    "evaluations": pl.Int32,
+    "converged": pl.Boolean,
+    "git_sha": pl.String,
+    "config_hash": pl.String,
+}
+
+SABR_PARAMS_SCHEMA: dict[str, pl.DataType | type[pl.DataType]] = {
+    "snapshot_id": pl.String,
+    "as_of_ns": pl.Int64,
+    "expiry_ns": pl.Int64,
+    "beta": pl.Float64,
+    "alpha": pl.Float64,
+    "rho": pl.Float64,
+    "nu": pl.Float64,
+    "rmse_iv_bp": pl.Float64,
+    "within_spread_frac": pl.Float64,
+    "max_error_bp": pl.Float64,
+    "n_quotes": pl.Int32,
+    "converged": pl.Boolean,
+}
+
 PERP_OHLC_SCHEMA: dict[str, pl.DataType | type[pl.DataType]] = {
     "ts": pl.Int64,
     "venue": pl.String,

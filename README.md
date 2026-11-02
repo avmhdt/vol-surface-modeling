@@ -19,7 +19,7 @@
 - [x] A robust implied-vol solver (Jäckel’s ‘Let’s Be Rational’ or a safeguarded Newton/Brent). (FR-09)
 - [x] Raw SVI per expiry plus a global SSVI fit (Gatheral and Jacquier 2014), with butterfly and calendar no-arbitrage enforced. (FR-11, FR-12)
 - [x] Arbitrage diagnostics: Durrleman’s g(k) ≥ 0, non-decreasing total variance, positive Breeden–Litzenberger density. (FR-13)
-- [ ] Model calibration: Heston via COS or Carr–Madan FFT, and SABR (Hagan) per expiry; compare fit error and stability.
+- [x] Model calibration: Heston via COS or Carr–Madan FFT, and SABR (Hagan) per expiry; compare fit error and stability. (FR-15 to FR-18)
 - [ ] A variance risk premium study: implied vs realized variance, and delta-hedged option P&L.
 
 ## Data

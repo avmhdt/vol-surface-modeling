@@ -8,6 +8,7 @@ from typing import Annotated
 import jsonschema
 import typer
 
+from vsm.bench import run_bench
 from vsm.config import AppConfig, config_hash, load_config
 from vsm.conventions import datetime_to_ns
 from vsm.explog import append_run
@@ -17,6 +18,7 @@ from vsm.io.deribit import DeribitClient
 from vsm.io.history import ingest_history
 from vsm.io.smoke import run_smoke
 from vsm.logs import configure_logging
+from vsm.models.runner import calibrate_heston_day, calibrate_sabr_day, refresh_comparison
 from vsm.pipeline import ALL_STEPS, export_day, recheck_day, refresh_outputs, run_day
 from vsm.settings import Settings
 
@@ -189,6 +191,56 @@ def build(
     )
     if built == 0:
         raise typer.Exit(code=1)
+
+
+@app.command()
+def calibrate(
+    model: Annotated[str, typer.Option("--model", help="heston or sabr")],
+    underlying: Annotated[str, typer.Option("--underlying")],
+    start: Annotated[str, typer.Option("--start", help="YYYY-MM-DD")],
+    end: Annotated[str, typer.Option("--end", help="YYYY-MM-DD")],
+    config_path: ConfigOption = None,
+) -> None:
+    """Calibrate a model on stored days and rebuild the model comparison."""
+    settings = Settings()
+    config = load_config(config_path)
+    configure_logging(settings.log_level, as_json=settings.log_json)
+    fits = {"heston": calibrate_heston_day, "sabr": calibrate_sabr_day}
+    if model not in fits:
+        typer.echo(f"unknown model: {model}")
+        raise typer.Exit(code=2)
+    results = {}
+    for day in _days(start, end):
+        result = fits[model](settings.data_dir, config, underlying, day)
+        typer.echo(f"{day}: {result or 'no stored surface'}")
+        if result is not None:
+            results[day.isoformat()] = result
+    summary = refresh_comparison(settings.data_dir, config, underlying)
+    for row in summary:
+        typer.echo(str(row))
+    append_run(
+        config.results_dir(),
+        f"calibrate {model}",
+        config_hash(config),
+        underlying=underlying,
+        start=start,
+        end=end,
+        metrics={"days": results},
+    )
+    if not results:
+        raise typer.Exit(code=1)
+
+
+@app.command()
+def bench(
+    quick: Annotated[bool, typer.Option("--quick", help="Skip the timing of stored days.")] = False,
+) -> None:
+    """Measure IV throughput and calibration times; writes results/bench."""
+    settings = Settings()
+    config = load_config()
+    configure_logging(settings.log_level, as_json=settings.log_json)
+    report = run_bench(settings.data_dir, config, quick=quick)
+    typer.echo(json.dumps(report, indent=2, sort_keys=True))
 
 
 def _days(start: str, end: str) -> list[date]:
