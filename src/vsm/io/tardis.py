@@ -461,7 +461,8 @@ def ingest_months(
             if stop_on_pause:
                 raise IngestPaused(reason)
             sleep(PAUSE_POLL_S)
-        for attempt in range(CONNECT_RETRIES):
+        failures = 0
+        while True:
             try:
                 stats = ingest_day(
                     client, data_dir, base_url, day, at_utc, cfg, keep_raw=keep_raw, sleep=sleep
@@ -469,9 +470,19 @@ def ingest_months(
                 break
             except httpx.TransportError as exc:
                 log.warning("tardis_retry", day=day.isoformat(), error=repr(exc)[:200])
-                if attempt == CONNECT_RETRIES - 1:
+                failures += 1
+                if failures == CONNECT_RETRIES:
                     raise
                 sleep(float(timedelta(minutes=1).total_seconds()))
+            except httpx.HTTPStatusError as exc:
+                if exc.response.status_code != httpx.codes.TOO_MANY_REQUESTS:
+                    raise
+                wait = float(exc.response.headers.get("retry-after", PAUSE_POLL_S))
+                reason = f"Tardis refused the download, retry after {wait:.0f} s"
+                log.warning("tardis_paused", reason=reason, day=day.isoformat())
+                if stop_on_pause:
+                    raise IngestPaused(reason) from exc
+                sleep(wait)
         if stats is not None:
             _record(results_dir, stats)
             done.append(stats)

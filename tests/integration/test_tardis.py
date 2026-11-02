@@ -373,6 +373,76 @@ def test_run_stops_when_asked_and_resumes_from_finished_days(
     assert list(saved) == ["2026-10-01"]
 
 
+def limited(request: httpx.Request) -> httpx.Response:
+    message = {"code": 277, "message": "This account has reached its data transfer limit."}
+    return httpx.Response(429, headers={"retry-after": "8145"}, json=message)
+
+
+def test_transfer_limit_waits_for_retry_after(tmp_path: Path, config: TardisConfig) -> None:
+    calls = {"n": 0}
+
+    def once(request: httpx.Request) -> httpx.Response:
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return limited(request)
+        return httpx.Response(200, stream=httpx.ByteStream(body()))
+
+    slept: list[float] = []
+    with httpx.Client(transport=httpx.MockTransport(once)) as client:
+        done = tardis.ingest_months(
+            client,
+            tmp_path,
+            tmp_path / "results",
+            "https://test.invalid/v1",
+            [DAY],
+            "08:15",
+            config,
+            sleep=slept.append,
+        )
+    assert slept == [8145.0]
+    assert len(done) == 1
+
+
+def test_transfer_limit_stops_a_run_that_asked_to_stop(
+    tmp_path: Path, config: TardisConfig
+) -> None:
+    with (
+        httpx.Client(transport=httpx.MockTransport(limited)) as client,
+        pytest.raises(tardis.IngestPaused, match="retry after 8145 s"),
+    ):
+        tardis.ingest_months(
+            client,
+            tmp_path,
+            tmp_path / "results",
+            "https://test.invalid/v1",
+            [DAY],
+            "08:15",
+            config,
+            stop_on_pause=True,
+            sleep=lambda _: None,
+        )
+
+
+def test_other_http_errors_still_raise(tmp_path: Path, config: TardisConfig) -> None:
+    def missing(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(404)
+
+    with (
+        httpx.Client(transport=httpx.MockTransport(missing)) as client,
+        pytest.raises(httpx.HTTPStatusError),
+    ):
+        tardis.ingest_months(
+            client,
+            tmp_path,
+            tmp_path / "results",
+            "https://test.invalid/v1",
+            [DAY],
+            "08:15",
+            config,
+            sleep=lambda _: None,
+        )
+
+
 def test_dropped_connection_retries_then_gives_up(tmp_path: Path, config: TardisConfig) -> None:
     calls = {"n": 0}
 
