@@ -1,8 +1,8 @@
 {
-  "butterfly_violations": 23,
+  "butterfly_violations": 110,
   "calendar_violations": 0,
-  "days": 3,
-  "days_with_spline_violation": 3,
+  "days": 23,
+  "days_with_spline_violation": 23,
   "exported_days_with_violation": 0,
   "share_of_days": 1.0,
   "underlying": "ETH"

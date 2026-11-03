@@ -1,0 +1,86 @@
+{
+  "date": "2020-05-01",
+  "density_mass_max_err": 2.126941453406417e-06,
+  "density_mean_max_err": 1.1329914784141693e-09,
+  "dropped": 0,
+  "min_calendar_dw": 0.011598868436753266,
+  "min_g": 0.1888542576454485,
+  "passed": true,
+  "slices": [
+    {
+      "density_mass_err": 8.662073280873983e-09,
+      "density_mean_err": 1.1329914784141693e-09,
+      "expiry": "2020-05-08T08:00Z",
+      "min_calendar_dw": null,
+      "min_g": 0.22858524387954304,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 4.517704876860762e-09,
+      "density_mean_err": 4.7251202950349125e-11,
+      "expiry": "2020-05-15T08:00Z",
+      "min_calendar_dw": 0.011598868436753266,
+      "min_g": 0.24747958704227957,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 7.19951362970761e-08,
+      "density_mean_err": 9.09767816636986e-11,
+      "expiry": "2020-05-29T08:00Z",
+      "min_calendar_dw": 0.021585910713526932,
+      "min_g": 0.2298444635921592,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 2.126941453406417e-06,
+      "density_mean_err": 2.387914310730821e-10,
+      "expiry": "2020-06-26T08:00Z",
+      "min_calendar_dw": 0.036210600905201555,
+      "min_g": 0.1888542576454485,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 1.6429946292362274e-09,
+      "density_mean_err": 2.220446049250313e-16,
+      "expiry": "2020-09-25T08:00Z",
+      "min_calendar_dw": 0.05509941426798526,
+      "min_g": 0.28364010468187345,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 1.3768648443601705e-09,
+      "density_mean_err": 1.6653345369377348e-15,
+      "expiry": "2020-12-25T08:00Z",
+      "min_calendar_dw": 0.14574923066792989,
+      "min_g": 0.2760100528809944,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    }
+  ],
+  "snapshot": "20200501T0815Z",
+  "sources": {
+    "svi": 6
+  },
+  "spline": {
+    "butterfly_violations": 6,
+    "calendar_violations": 0,
+    "slices": 6
+  },
+  "ssvi": {
+    "eta": 0.9813326268870872,
+    "gamma": 0.5,
+    "rho": -0.1574163854910689
+  },
+  "underlying": "BTC"
+}

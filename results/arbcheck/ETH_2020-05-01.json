@@ -1,0 +1,76 @@
+{
+  "date": "2020-05-01",
+  "density_mass_max_err": 2.8367308502197375e-12,
+  "density_mean_max_err": 9.413247958889315e-11,
+  "dropped": 0,
+  "min_calendar_dw": 0.022215616991100168,
+  "min_g": 0.2711206084814965,
+  "passed": true,
+  "slices": [
+    {
+      "density_mass_err": 2.8367308502197375e-12,
+      "density_mean_err": 9.413247958889315e-11,
+      "expiry": "2020-05-08T08:00Z",
+      "min_calendar_dw": null,
+      "min_g": 0.2711206084814965,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 2.6890711879445917e-12,
+      "density_mean_err": 6.661338147750939e-16,
+      "expiry": "2020-05-29T08:00Z",
+      "min_calendar_dw": 0.022215616991100168,
+      "min_g": 0.31521029363495673,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 0.0,
+      "density_mean_err": 8.171241461241152e-14,
+      "expiry": "2020-06-26T08:00Z",
+      "min_calendar_dw": 0.029370446934359307,
+      "min_g": 0.2969391122392549,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 0.0,
+      "density_mean_err": 2.220446049250313e-15,
+      "expiry": "2020-09-25T08:00Z",
+      "min_calendar_dw": 0.20452969594116865,
+      "min_g": 0.32065744103050725,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 0.0,
+      "density_mean_err": 1.1102230246251565e-15,
+      "expiry": "2020-12-25T08:00Z",
+      "min_calendar_dw": 0.2419207461384021,
+      "min_g": 0.3452447179802349,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    }
+  ],
+  "snapshot": "20200501T0815Z",
+  "sources": {
+    "svi": 5
+  },
+  "spline": {
+    "butterfly_violations": 3,
+    "calendar_violations": 0,
+    "slices": 5
+  },
+  "ssvi": {
+    "eta": 0.7691702522499844,
+    "gamma": 0.5,
+    "rho": -0.04352304331595626
+  },
+  "underlying": "ETH"
+}

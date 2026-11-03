@@ -1,0 +1,56 @@
+{
+  "date": "2020-03-01",
+  "density_mass_max_err": 1.0453859999870474e-12,
+  "density_mean_max_err": 2.225116979559516e-09,
+  "dropped": 0,
+  "min_calendar_dw": 0.14811022523436757,
+  "min_g": 0.20292101004756535,
+  "passed": true,
+  "slices": [
+    {
+      "density_mass_err": 1.0453859999870474e-12,
+      "density_mean_err": 2.225116979559516e-09,
+      "expiry": "2020-03-27T08:00Z",
+      "min_calendar_dw": null,
+      "min_g": 0.20292101004756535,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 0.0,
+      "density_mean_err": 8.449019262002366e-11,
+      "expiry": "2020-06-26T08:00Z",
+      "min_calendar_dw": 0.16825531085728843,
+      "min_g": 0.2683957797165137,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 0.0,
+      "density_mean_err": 9.703349235223868e-14,
+      "expiry": "2020-09-25T08:00Z",
+      "min_calendar_dw": 0.14811022523436757,
+      "min_g": 0.34431010148298624,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    }
+  ],
+  "snapshot": "20200301T0815Z",
+  "sources": {
+    "svi": 3
+  },
+  "spline": {
+    "butterfly_violations": 3,
+    "calendar_violations": 0,
+    "slices": 3
+  },
+  "ssvi": {
+    "eta": 0.81930700408977,
+    "gamma": 0.5,
+    "rho": 0.09944071587610462
+  },
+  "underlying": "ETH"
+}
