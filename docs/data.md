@@ -77,7 +77,7 @@ First stage, the smallest 20 files, finished on 2026-11-03:
 - Read 5.43 GB, 32 to 38% of each file, in about 9 minutes at the cap. The 29.1% from the one-file test was too low for the early files, because the share depends on how the day's activity is spread.
 - 0 steps backwards in `local_timestamp`, and every file reached the end of the window. 16,712 BTC and ETH quotes kept.
 - The crypto recorder had no Binance disconnects and no resyncs during either part of the download. Binance had none in the 3.3 hours before it either, so this says little about what a longer download would do.
-- Every sampled ingest p99 stayed below the 1,000 us ceiling. The highest was 761 us while downloading.
+- Every sampled ingest p99 stayed below the 1,000 us ceiling. The highest was 883 us, on Coinbase in the first part, when p99 was already that high before the download began.
 
 Projected reads at 29.1% of each file, so treat them as low:
 
