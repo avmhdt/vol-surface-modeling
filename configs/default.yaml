@@ -64,6 +64,8 @@ sabr: {beta: 1.0, obloj_correction: false}
 localvol:
   k_grid: {min: -1.5, max: 1.5, n: 121}
   t_grid_days: [2, 7, 14, 30, 60, 90, 180, 365]
+  reprice_tenor_days: [14, 30, 60]      # AC-H-03 needs 3 tenors; ours to choose
+  reprice_strike_pct: [0.8, 0.9, 1.0, 1.1, 1.2]
 mc: {paths: 200000, steps_per_day: 24, antithetic: true, seed: 20261030}
 barrier:
   tenor_days: 30

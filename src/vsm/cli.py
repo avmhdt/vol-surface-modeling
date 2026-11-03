@@ -1,6 +1,7 @@
 """The ``vsm`` command line."""
 
 import json
+import math
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Annotated
@@ -19,10 +20,14 @@ from vsm.io.deribit import DeribitClient
 from vsm.io.history import ingest_history
 from vsm.io.smoke import run_smoke
 from vsm.io.tardis import IngestPaused, first_of_month_days, ingest_months
+from vsm.localvol.runner import run_barrier_day, run_localvol_day
 from vsm.logs import configure_logging
 from vsm.models.runner import calibrate_heston_day, calibrate_sabr_day, refresh_comparison
 from vsm.pipeline import ALL_STEPS, export_day, recheck_day, refresh_outputs, run_day
 from vsm.settings import Settings
+from vsm.studies.sticky import run_sticky
+from vsm.studies.straddle import run_straddles
+from vsm.studies.vrp import run_vrp
 
 app = typer.Typer(add_completion=False, no_args_is_help=True, help="Volatility surface pipeline.")
 ingest_app = typer.Typer(
@@ -247,6 +252,129 @@ def bench(
     configure_logging(settings.log_level, as_json=settings.log_json)
     report = run_bench(settings.data_dir, config, quick=quick)
     typer.echo(json.dumps(report, indent=2, sort_keys=True))
+
+
+@app.command()
+def localvol(
+    underlying: Annotated[str, typer.Option("--underlying")],
+    day: Annotated[str, typer.Option("--date", help="YYYY-MM-DD")],
+    config_path: ConfigOption = None,
+) -> None:
+    """Store the Dupire grid of one day and check that it reprices its surface."""
+    settings = Settings()
+    config = load_config(config_path)
+    configure_logging(settings.log_level, as_json=settings.log_json)
+    entry = run_localvol_day(settings.data_dir, config, underlying, date.fromisoformat(day))
+    if entry is None:
+        typer.echo(f"{day}: no surface that passes the gate")
+        raise typer.Exit(code=1)
+    repricing = entry["repricing"]
+    typer.echo(
+        f"{day}: vol {entry['min_vol']:.3f} to {entry['max_vol']:.3f}, finite {entry['finite']}, "
+        f"positive {entry['positive']}, worst repricing {repricing['worst_abs_z']:.2f} SE"
+    )
+
+
+@app.command()
+def barrier(
+    underlying: Annotated[str, typer.Option("--underlying")],
+    day: Annotated[str, typer.Option("--date", help="YYYY-MM-DD")],
+    paths: Annotated[int | None, typer.Option("--paths")] = None,
+    seed: Annotated[int | None, typer.Option("--seed")] = None,
+    config_path: ConfigOption = None,
+) -> None:
+    """Price the configured knock-out calls under local vol, Heston and flat Black."""
+    settings = Settings()
+    config = load_config(config_path)
+    configure_logging(settings.log_level, as_json=settings.log_json)
+    rows = run_barrier_day(
+        settings.data_dir, config, underlying, date.fromisoformat(day), paths=paths, seed=seed
+    )
+    if rows is None:
+        typer.echo(f"{day}: needs a surface that passes the gate and a Heston fit")
+        raise typer.Exit(code=1)
+    for row in rows:
+        typer.echo(
+            f"{day} {row['product']}: local vol {row['local_vol_price']:.2f} "
+            f"({row['local_vol_se']:.2f}), Heston {row['heston_price']:.2f} "
+            f"({row['heston_se']:.2f}), Black {row['black_price']:.2f} ({row['black_se']:.2f})"
+        )
+
+
+@app.command()
+def vrp(
+    underlying: Annotated[str, typer.Option("--underlying")],
+    start: Annotated[str, typer.Option("--start", help="YYYY-MM-DD")],
+    end: Annotated[str, typer.Option("--end", help="YYYY-MM-DD")],
+    source: Annotated[str, typer.Option("--source", help="surfaces or dvol")] = "surfaces",
+    config_path: ConfigOption = None,
+) -> None:
+    """30-day implied against realized variance, with Newey-West and bootstrap statistics."""
+    settings = Settings()
+    config = load_config(config_path)
+    configure_logging(settings.log_level, as_json=settings.log_json)
+    try:
+        table = run_vrp(
+            settings.data_dir,
+            config,
+            underlying,
+            date.fromisoformat(start),
+            date.fromisoformat(end),
+            source,
+        )
+    except ValueError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(code=2) from exc
+    path = config.results_dir() / "metrics" / f"vrp_{source}_{underlying}.json"
+    summary = json.loads(path.read_text(encoding="utf-8"))["all"]
+    typer.echo(
+        f"{underlying} {source}: {table.height} windows, "
+        f"mean VRP {summary.get('mean', math.nan):.4f}, "
+        f"Newey-West t {summary.get('nw_t', math.nan):.2f}"
+    )
+
+
+@app.command()
+def straddle(
+    underlying: Annotated[str, typer.Option("--underlying")],
+    source: Annotated[str, typer.Option("--source")] = "tardis_monthly",
+    hedge: Annotated[str, typer.Option("--hedge")] = "entry_iv",
+    config_path: ConfigOption = None,
+) -> None:
+    """Delta-hedged straddles with costs, gross and net, with their statistics."""
+    settings = Settings()
+    config = load_config(config_path)
+    configure_logging(settings.log_level, as_json=settings.log_json)
+    try:
+        table = run_straddles(settings.data_dir, config, underlying, source, hedge)
+    except ValueError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(code=2) from exc
+    name = f"{source}_{hedge}_{underlying}"
+    metrics = json.loads(
+        (config.results_dir() / "metrics" / f"straddle_{name}.json").read_text(encoding="utf-8")
+    )
+    net = metrics.get("net", {})
+    typer.echo(
+        f"{underlying} {source} {hedge}: {table.height} trades, net mean "
+        f"{100.0 * net.get('mean', math.nan):.3f}% of forward, Newey-West t "
+        f"{net.get('nw_t', math.nan):.2f}, gamma R^2 {metrics.get('gamma_r2', math.nan):.3f}"
+    )
+
+
+@app.command()
+def sticky(
+    underlying: Annotated[str, typer.Option("--underlying")],
+    start: Annotated[str, typer.Option("--start", help="YYYY-MM-DD")],
+    end: Annotated[str, typer.Option("--end", help="YYYY-MM-DD")],
+    config_path: ConfigOption = None,
+) -> None:
+    """Sticky strike against sticky delta on consecutive daily surfaces."""
+    settings = Settings()
+    config = load_config(config_path)
+    configure_logging(settings.log_level, as_json=settings.log_json)
+    metrics = run_sticky(settings.data_dir, config, underlying, start, end)
+    typer.echo(f"{underlying}: {metrics['pairs']} daily pairs; {metrics['conclusion']}")
 
 
 def _days(start: str, end: str) -> list[date]:

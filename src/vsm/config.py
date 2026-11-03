@@ -166,6 +166,117 @@ class SabrConfig(BaseModel):
     obloj_correction: bool = False
 
 
+class LocalVolKGrid(BaseModel):
+    """Uniform log-moneyness grid."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    min: float = -1.5
+    max: float = 1.5
+    n: int = 121
+
+
+class LocalVolConfig(BaseModel):
+    """Dupire grid (FR-19) and the vanillas it must reprice (AC-H-03)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    k_grid: LocalVolKGrid = LocalVolKGrid()
+    t_grid_days: list[float] = [2, 7, 14, 30, 60, 90, 180, 365]
+    reprice_tenor_days: list[float] = [14, 30, 60]
+    reprice_strike_pct: list[float] = [0.8, 0.9, 1.0, 1.1, 1.2]
+
+
+class McConfig(BaseModel):
+    """Monte Carlo size and seed (FR-20, NFR-02)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    paths: int = 200_000
+    steps_per_day: int = 24
+    antithetic: bool = True
+    seed: int = 20261030
+
+
+class BarrierProduct(BaseModel):
+    """One knock-out call, as fractions of the forward."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    type: Literal["down_and_out_call", "up_and_out_call"]
+    strike_pct: float
+    barrier_pct: float
+
+
+class BarrierConfig(BaseModel):
+    """Products priced under local vol, Heston and flat Black (FR-20)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    tenor_days: int = 30
+    products: list[BarrierProduct] = [
+        BarrierProduct(type="down_and_out_call", strike_pct=1.0, barrier_pct=0.85),
+        BarrierProduct(type="up_and_out_call", strike_pct=1.0, barrier_pct=1.2),
+    ]
+
+
+class VrpConfig(BaseModel):
+    """Implied against realized variance (FR-21)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    tenor_days: int = 30
+    rv_bar_s: int = 3600
+    hac_lags: Literal["auto"] = "auto"
+
+
+class StraddleHedge(BaseModel):
+    """How the straddle's delta is hedged (D-06)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    instrument: Literal["perpetual"] = "perpetual"
+    rebalance: Literal["daily"] = "daily"
+    delta: Literal["entry_iv", "current_iv", "min_variance"] = "entry_iv"
+
+
+class StraddleCosts(BaseModel):
+    """Fills at the touch, fees from the venue's table, and hedge slippage."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    fee_table: str = "configs/fees/deribit.yaml"
+    option_fill: Literal["bid_ask", "mid"] = "bid_ask"
+    hedge_slippage_bps: float = 2.0
+
+
+class Bootstrap(BaseModel):
+    """Stationary bootstrap of a mean."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    n: int = 10_000
+    method: Literal["stationary"] = "stationary"
+    mean_block: float = 3.0
+    seed: int = 7
+
+
+class StraddleConfig(BaseModel):
+    """The straddle design (FR-22), frozen before the AC-H-02 metrics are computed."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    source: Literal["tardis_monthly", "recorder_daily", "tardis_daily"] = "tardis_monthly"
+    entry_time_utc: str = "08:15"
+    target_days: float = 30.0
+    min_days: float = 20.0
+    max_days: float = 45.0
+    side: Literal["short", "long"] = "short"
+    hedge: StraddleHedge = StraddleHedge()
+    costs: StraddleCosts = StraddleCosts()
+    bootstrap: Bootstrap = Bootstrap()
+
+
 class TardisConfig(BaseModel):
     """Free first-of-month ingest. The rate cap and guards are the owner's conditions."""
 
@@ -209,6 +320,11 @@ class AppConfig(BaseModel):
     arbitrage: ArbitrageConfig = ArbitrageConfig()
     heston: HestonConfig = HestonConfig()
     sabr: SabrConfig = SabrConfig()
+    localvol: LocalVolConfig = LocalVolConfig()
+    mc: McConfig = McConfig()
+    barrier: BarrierConfig = BarrierConfig()
+    vrp: VrpConfig = VrpConfig()
+    straddle: StraddleConfig = StraddleConfig()
     tardis: TardisConfig = TardisConfig()
     export: ExportConfig = ExportConfig()
 
