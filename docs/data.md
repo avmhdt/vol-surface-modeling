@@ -106,6 +106,8 @@ The recorder's planned connection rotation every 23 hours also counts as a new B
 
 Keyless downloads have a data transfer limit. The first stage hit it on 2026-11-02 at 22:18 UTC, after about 6.0 GB read since 01:09 UTC that day: HTTP 429, code 277, with a `retry-after` of 8,145 s. A further 4.65 GB went through after the reset at about 00:35 UTC. Tardis documents limits only for paid plans, so the size and period of this one are not known, and the times above assume no limit. The ingest treats a 429 as a pause and honours `retry-after`. It never tries to get around the limit.
 
+AC-H-02 needs 60 monthly straddle entries per underlying. The 21 files stored after stage 1 each give one for BTC and for ETH, so 39 more are needed. They are taken oldest first, which makes an unbroken run from 2020-03 to 2025-01, plus 2026-10-01. That costs about 32 GB, against about 29 GB for the 39 smallest, and it runs at up to 5.5 GB per reset. The limit is between 5.82 and 6.01 GB: a request at 5.82 GB was served, and the next one, at 6.01 GB, was refused.
+
 ## Datasets
 
 ```text

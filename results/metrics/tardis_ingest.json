@@ -95,6 +95,30 @@
     "seconds": 20.638215185999798,
     "total_bytes": 597425724
   },
+  "2020-11-01": {
+    "bytes_read": 368050176,
+    "decompressed_bytes": 2338361826,
+    "inversions": 0,
+    "last_local_ts_us": 1604218905924013,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 840,
+    "rows_read": 11840551,
+    "seconds": 36.89456108700142,
+    "total_bytes": 1058668953
+  },
+  "2020-12-01": {
+    "bytes_read": 361758720,
+    "decompressed_bytes": 1428120886,
+    "inversions": 0,
+    "last_local_ts_us": 1606811279820358,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1050,
+    "rows_read": 6974719,
+    "seconds": 36.242507271999784,
+    "total_bytes": 1223241323
+  },
   "2021-01-01": {
     "bytes_read": 355467264,
     "decompressed_bytes": 1417495213,
