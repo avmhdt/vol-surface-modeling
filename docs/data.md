@@ -98,6 +98,8 @@ With `--stop-on-pause` the command exits with code 3 when the guard trips, rathe
 
 The recorder's planned connection rotation every 23 hours also counts as a new Binance connection, so a run that crosses one stops and has to be resumed.
 
+Keyless downloads have a data transfer limit. The first stage hit it on 2026-11-02 at 22:18 UTC, after about 6.0 GB read since 01:09 UTC that day: HTTP 429, code 277, with a `retry-after` of 8,145 s. Tardis documents limits only for paid plans, so the size and period of this one are not known. The ingest treats a 429 as a pause and honours `retry-after`. It never tries to get around the limit.
+
 ## Datasets
 
 ```text
