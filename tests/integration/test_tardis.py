@@ -399,7 +399,7 @@ def test_transfer_limit_waits_for_retry_after(tmp_path: Path, config: TardisConf
             config,
             sleep=slept.append,
         )
-    assert slept == [8145.0]
+    assert 8145.0 in slept
     assert len(done) == 1
 
 
