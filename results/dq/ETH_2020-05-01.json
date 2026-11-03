@@ -1,0 +1,69 @@
+{
+  "ask_below_intrinsic": 0,
+  "by_reason": {
+    "bound_violation": 21,
+    "iv_fail": 33,
+    "kept": 88,
+    "no_ask": 13,
+    "short_expiry": 24,
+    "wide_market": 95
+  },
+  "date": "2020-05-01",
+  "forward_gap_flagged_expiries": [],
+  "forward_methods": {
+    "deribit_underlying": 1,
+    "parity_wls": 6
+  },
+  "kept": 88,
+  "liquid": 68,
+  "mark_iv_check": {
+    "median_abs_diff_vol_pts": 0.011664945689282558,
+    "n": 125,
+    "warning": false
+  },
+  "per_expiry": {
+    "2020-05-02T08:00Z": {
+      "short_expiry": 24
+    },
+    "2020-05-08T08:00Z": {
+      "bound_violation": 2,
+      "iv_fail": 8,
+      "kept": 7,
+      "wide_market": 17
+    },
+    "2020-05-15T08:00Z": {
+      "iv_fail": 5,
+      "wide_market": 31
+    },
+    "2020-05-29T08:00Z": {
+      "iv_fail": 6,
+      "kept": 13,
+      "wide_market": 13
+    },
+    "2020-06-26T08:00Z": {
+      "bound_violation": 2,
+      "iv_fail": 12,
+      "kept": 16,
+      "wide_market": 22
+    },
+    "2020-09-25T08:00Z": {
+      "bound_violation": 8,
+      "iv_fail": 1,
+      "kept": 25,
+      "no_ask": 9,
+      "wide_market": 9
+    },
+    "2020-12-25T08:00Z": {
+      "bound_violation": 9,
+      "iv_fail": 1,
+      "kept": 27,
+      "no_ask": 4,
+      "wide_market": 3
+    }
+  },
+  "rows": 274,
+  "snapshot": "20200501T0815Z",
+  "snapshot_flagged": false,
+  "source": "tardis",
+  "underlying": "ETH"
+}

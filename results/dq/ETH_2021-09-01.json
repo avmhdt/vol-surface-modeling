@@ -1,0 +1,92 @@
+{
+  "ask_below_intrinsic": 0,
+  "by_reason": {
+    "bound_violation": 5,
+    "iv_fail": 31,
+    "kept": 173,
+    "no_ask": 42,
+    "short_expiry": 94,
+    "wide_market": 34,
+    "zero_bid": 67
+  },
+  "date": "2021-09-01",
+  "forward_gap_flagged_expiries": [],
+  "forward_methods": {
+    "deribit_underlying": 5,
+    "parity_wls": 5
+  },
+  "kept": 173,
+  "liquid": 124,
+  "mark_iv_check": {
+    "median_abs_diff_vol_pts": 0.006429526704110344,
+    "n": 172,
+    "warning": false
+  },
+  "per_expiry": {
+    "2021-09-02T08:00Z": {
+      "short_expiry": 46
+    },
+    "2021-09-03T08:00Z": {
+      "short_expiry": 48
+    },
+    "2021-09-10T08:00Z": {
+      "bound_violation": 2,
+      "iv_fail": 2,
+      "kept": 21,
+      "wide_market": 5,
+      "zero_bid": 8
+    },
+    "2021-09-17T08:00Z": {
+      "iv_fail": 3,
+      "kept": 20,
+      "no_ask": 3,
+      "wide_market": 5,
+      "zero_bid": 7
+    },
+    "2021-09-24T08:00Z": {
+      "iv_fail": 16,
+      "kept": 21,
+      "no_ask": 2,
+      "wide_market": 12,
+      "zero_bid": 17
+    },
+    "2021-10-29T08:00Z": {
+      "bound_violation": 1,
+      "kept": 21,
+      "no_ask": 7,
+      "zero_bid": 7
+    },
+    "2021-11-26T08:00Z": {
+      "kept": 16,
+      "no_ask": 7,
+      "zero_bid": 7
+    },
+    "2021-12-31T08:00Z": {
+      "bound_violation": 1,
+      "iv_fail": 8,
+      "kept": 33,
+      "no_ask": 6,
+      "wide_market": 10,
+      "zero_bid": 8
+    },
+    "2022-03-25T08:00Z": {
+      "iv_fail": 1,
+      "kept": 23,
+      "no_ask": 8,
+      "wide_market": 2,
+      "zero_bid": 10
+    },
+    "2022-06-24T08:00Z": {
+      "bound_violation": 1,
+      "iv_fail": 1,
+      "kept": 18,
+      "no_ask": 9,
+      "zero_bid": 3
+    }
+  },
+  "rows": 446,
+  "snapshot": "20210901T0815Z",
+  "snapshot_flagged": false,
+  "source": "tardis",
+  "underlying": "ETH"
+}

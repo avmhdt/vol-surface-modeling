@@ -72,11 +72,17 @@ One-file test on the largest file, 2026-10-01, at the 10 MB/s cap:
 - 1,800 BTC and ETH quotes kept. Recent files also hold USDC options on other coins, which are filtered out.
 - The crypto recorder had no resyncs, and median ingest p99 did not change: 275 to 237 us on Binance, 393 to 416 us on Coinbase, 269 to 288 us on Kraken, comparing the 40 minutes before with the 9 during.
 
-Projected reads at 29.1% of each file. Early files may differ, since the share depends on how the day's activity is spread.
+First stage, the smallest 20 files, finished on 2026-11-03:
+
+- Read 5.43 GB, 32 to 38% of each file, in about 9 minutes at the cap. The 29.1% from the one-file test was too low for the early files, because the share depends on how the day's activity is spread.
+- 0 steps backwards in `local_timestamp`, and every file reached the end of the window. 16,712 BTC and ETH quotes kept.
+- The crypto recorder had no Binance disconnects and no resyncs during either part of the download. Binance had none in the 3.3 hours before it either, so this says little about what a longer download would do.
+- Every sampled ingest p99 stayed below the 1,000 us ceiling. The highest was 761 us while downloading.
+
+Projected reads at 29.1% of each file, so treat them as low:
 
 | Files | Compressed total | Projected read | At 10 MB/s |
 |---|---|---|---|
-| Smallest 20 | 15.6 GB | 4.5 GB | 8 minutes |
 | Most recent 20 | 145.7 GB | 42.4 GB | 1.2 hours |
 | All 80 | 249.7 GB | 72.7 GB | 2.0 hours |
 
@@ -98,7 +104,7 @@ With `--stop-on-pause` the command exits with code 3 when the guard trips, rathe
 
 The recorder's planned connection rotation every 23 hours also counts as a new Binance connection, so a run that crosses one stops and has to be resumed.
 
-Keyless downloads have a data transfer limit. The first stage hit it on 2026-11-02 at 22:18 UTC, after about 6.0 GB read since 01:09 UTC that day: HTTP 429, code 277, with a `retry-after` of 8,145 s. Tardis documents limits only for paid plans, so the size and period of this one are not known. The ingest treats a 429 as a pause and honours `retry-after`. It never tries to get around the limit.
+Keyless downloads have a data transfer limit. The first stage hit it on 2026-11-02 at 22:18 UTC, after about 6.0 GB read since 01:09 UTC that day: HTTP 429, code 277, with a `retry-after` of 8,145 s. A further 4.65 GB went through after the reset at about 00:35 UTC. Tardis documents limits only for paid plans, so the size and period of this one are not known, and the times above assume no limit. The ingest treats a 429 as a pause and honours `retry-after`. It never tries to get around the limit.
 
 ## Datasets
 

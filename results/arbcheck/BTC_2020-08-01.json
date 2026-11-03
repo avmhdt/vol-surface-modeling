@@ -1,0 +1,77 @@
+{
+  "date": "2020-08-01",
+  "density_mass_max_err": 8.256326633482303e-08,
+  "density_mean_max_err": 2.4166477707865397e-09,
+  "dropped": 1,
+  "min_calendar_dw": 0.0050251297378748425,
+  "min_g": 0.16163907027803498,
+  "passed": true,
+  "slices": [
+    {
+      "density_mass_err": 2.7298685534304923e-10,
+      "density_mean_err": 2.4166477707865397e-09,
+      "expiry": "2020-08-07T08:00Z",
+      "min_calendar_dw": null,
+      "min_g": 0.23967890097379496,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 1.7362421389499616e-08,
+      "density_mean_err": 7.465215112745227e-10,
+      "expiry": "2020-08-14T08:00Z",
+      "min_calendar_dw": 0.0050251297378748425,
+      "min_g": 0.17531376264933637,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 2.0691613089596217e-08,
+      "density_mean_err": 1.6736367847158817e-10,
+      "expiry": "2020-08-28T08:00Z",
+      "min_calendar_dw": 0.012051604979479486,
+      "min_g": 0.1959564657759188,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 8.256326633482303e-08,
+      "density_mean_err": 4.1663117400503324e-11,
+      "expiry": "2020-09-25T08:00Z",
+      "min_calendar_dw": 0.026939770194075327,
+      "min_g": 0.16163907027803498,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 7.499130649790686e-09,
+      "density_mean_err": 2.610134330893743e-13,
+      "expiry": "2020-12-25T08:00Z",
+      "min_calendar_dw": 0.10602330866696107,
+      "min_g": 0.22852532266593778,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    }
+  ],
+  "snapshot": "20200801T0815Z",
+  "sources": {
+    "dropped": 1,
+    "svi": 5
+  },
+  "spline": {
+    "butterfly_violations": 5,
+    "calendar_violations": 0,
+    "slices": 6
+  },
+  "ssvi": {
+    "eta": 0.9232833560349681,
+    "gamma": 0.5,
+    "rho": 0.0764467892500432
+  },
+  "underlying": "BTC"
+}

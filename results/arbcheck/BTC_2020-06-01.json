@@ -1,0 +1,86 @@
+{
+  "date": "2020-06-01",
+  "density_mass_max_err": 4.2767112962138754e-08,
+  "density_mean_max_err": 3.4762814848932067e-10,
+  "dropped": 0,
+  "min_calendar_dw": 0.007523773397720427,
+  "min_g": 0.23608693622992613,
+  "passed": true,
+  "slices": [
+    {
+      "density_mass_err": 1.0582756893029455e-10,
+      "density_mean_err": 1.5441425915696527e-11,
+      "expiry": "2020-06-05T08:00Z",
+      "min_calendar_dw": null,
+      "min_g": 0.2712431800719366,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 2.908302487725223e-09,
+      "density_mean_err": 3.4762814848932067e-10,
+      "expiry": "2020-06-12T08:00Z",
+      "min_calendar_dw": 0.007523773397720427,
+      "min_g": 0.23608693622992613,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 1.0330568733785128e-08,
+      "density_mean_err": 1.9710610921208627e-10,
+      "expiry": "2020-06-26T08:00Z",
+      "min_calendar_dw": 0.018570353914288178,
+      "min_g": 0.24626890082555297,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 3.4236502521878265e-10,
+      "density_mean_err": 1.2835443818914882e-10,
+      "expiry": "2020-07-31T08:00Z",
+      "min_calendar_dw": 0.04590467935698331,
+      "min_g": 0.2793428299872158,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 4.2767112962138754e-08,
+      "density_mean_err": 1.2713496921890055e-10,
+      "expiry": "2020-09-25T08:00Z",
+      "min_calendar_dw": 0.09103234752503683,
+      "min_g": 0.2367744604758917,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 1.6742300101846297e-08,
+      "density_mean_err": 6.039613253960852e-13,
+      "expiry": "2020-12-25T08:00Z",
+      "min_calendar_dw": 0.1818277084845679,
+      "min_g": 0.2736476252046834,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    }
+  ],
+  "snapshot": "20200601T0815Z",
+  "sources": {
+    "svi": 6
+  },
+  "spline": {
+    "butterfly_violations": 4,
+    "calendar_violations": 0,
+    "slices": 6
+  },
+  "ssvi": {
+    "eta": 1.1774433331336305,
+    "gamma": 0.5,
+    "rho": -0.0640598559757813
+  },
+  "underlying": "BTC"
+}

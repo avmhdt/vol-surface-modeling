@@ -1,0 +1,77 @@
+{
+  "ask_below_intrinsic": 0,
+  "by_reason": {
+    "bound_violation": 28,
+    "iv_fail": 45,
+    "kept": 129,
+    "no_ask": 21,
+    "short_expiry": 40,
+    "wide_market": 26,
+    "zero_bid": 1
+  },
+  "date": "2020-05-01",
+  "forward_gap_flagged_expiries": [],
+  "forward_methods": {
+    "deribit_underlying": 1,
+    "parity_wls": 6
+  },
+  "kept": 129,
+  "liquid": 95,
+  "mark_iv_check": {
+    "median_abs_diff_vol_pts": 0.003178933532632655,
+    "n": 125,
+    "warning": false
+  },
+  "per_expiry": {
+    "2020-05-02T08:00Z": {
+      "short_expiry": 40
+    },
+    "2020-05-08T08:00Z": {
+      "bound_violation": 4,
+      "iv_fail": 8,
+      "kept": 24,
+      "no_ask": 6,
+      "wide_market": 6
+    },
+    "2020-05-15T08:00Z": {
+      "iv_fail": 13,
+      "kept": 24,
+      "no_ask": 3,
+      "wide_market": 2
+    },
+    "2020-05-29T08:00Z": {
+      "bound_violation": 1,
+      "iv_fail": 8,
+      "kept": 16,
+      "no_ask": 3,
+      "wide_market": 4
+    },
+    "2020-06-26T08:00Z": {
+      "bound_violation": 11,
+      "iv_fail": 8,
+      "kept": 23,
+      "no_ask": 2,
+      "wide_market": 4
+    },
+    "2020-09-25T08:00Z": {
+      "bound_violation": 5,
+      "iv_fail": 7,
+      "kept": 22,
+      "no_ask": 3,
+      "wide_market": 4,
+      "zero_bid": 1
+    },
+    "2020-12-25T08:00Z": {
+      "bound_violation": 7,
+      "iv_fail": 1,
+      "kept": 20,
+      "no_ask": 4,
+      "wide_market": 6
+    }
+  },
+  "rows": 290,
+  "snapshot": "20200501T0815Z",
+  "snapshot_flagged": false,
+  "source": "tardis",
+  "underlying": "BTC"
+}
