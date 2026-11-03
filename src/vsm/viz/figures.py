@@ -98,6 +98,47 @@ def model_fit_comparison(
     _save(fig, path)
 
 
+def sticky_regression(
+    returns: F64, fixed_strike: F64, fixed_moneyness: F64, title: str, path: Path
+) -> None:
+    """Daily IV changes against spot log returns, at a fixed strike and a fixed moneyness."""
+    fig, ax = plt.subplots(figsize=(7.2, 4.0))
+    fig.patch.set_facecolor(SURFACE)
+    _style(ax)
+    ax.axhline(0.0, color=GRID, linewidth=0.8)
+    ax.axvline(0.0, color=GRID, linewidth=0.8)
+    for values, color, label in (
+        (fixed_strike, BLUE, "Fixed strike"),
+        (fixed_moneyness, ORANGE, "Fixed moneyness (sticky delta)"),
+    ):
+        ax.scatter(100.0 * returns, 100.0 * values, s=18, color=color, edgecolor=SURFACE)
+        if returns.size >= 2 and np.ptp(returns) > 0.0:
+            slope, intercept = np.polyfit(returns, values, 1)
+            line = np.linspace(returns.min(), returns.max(), 2)
+            ax.plot(100.0 * line, 100.0 * (intercept + slope * line), color=color, linewidth=2)
+        ax.plot([], [], color=color, linewidth=2, label=label)
+    ax.legend(frameon=False, fontsize=8, labelcolor=MUTED)
+    ax.set_xlabel("Daily log return of the 30-day forward, %")
+    ax.set_ylabel("Change in 30-day IV, vol points")
+    ax.set_title(title, loc="left", color=INK, fontsize=11)
+    _save(fig, path)
+
+
+def straddle_pnl(entry_years: F64, gross: F64, net: F64, title: str, path: Path) -> None:
+    """Cumulative gross and net P&L of the straddle study, as a fraction of the forward."""
+    fig, ax = plt.subplots(figsize=(7.2, 4.0))
+    fig.patch.set_facecolor(SURFACE)
+    _style(ax)
+    ax.axhline(0.0, color=GRID, linewidth=0.8)
+    ax.plot(entry_years, 100.0 * np.cumsum(gross), color=BLUE, linewidth=2, label="Gross")
+    ax.plot(entry_years, 100.0 * np.cumsum(net), color=ORANGE, linewidth=2, label="Net of costs")
+    ax.legend(frameon=False, fontsize=8, labelcolor=MUTED)
+    ax.set_xlabel("Entry date")
+    ax.set_ylabel("Cumulative P&L, % of forward")
+    ax.set_title(title, loc="left", color=INK, fontsize=11)
+    _save(fig, path)
+
+
 def rnd_skew(risk_reversal: F64, skewness: F64, t_days: F64, title: str, path: Path) -> None:
     """Density skewness against the 25-delta risk reversal, one point per slice."""
     fig, ax = plt.subplots(figsize=(7.2, 4.0))

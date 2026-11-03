@@ -47,6 +47,24 @@ The characteristic function uses the "little trap" form, which stays on the prin
 
 Heston cannot produce the steep smiles of short crypto expiries: variance moves too slowly from v0 to bend a 2-day smile. On the first real day its IV RMSE was 152 bp for BTC and 286 bp for ETH, against 22 and 28 bp for SVI. Leaving out expiries under 7 days cut BTC to 63 bp and ETH to 120 bp.
 
+## Local vol and barriers
+
+Dupire's formula in total variance, sigma_loc^2 = dw/dT / g(k, T), with g Durrleman's function and every derivative of the SSVI surface analytic. On a surface that passes the gate g is positive, so local vol is finite and positive wherever dw/dT is. `vsm localvol` stores the configured grid and reprices 15 SSVI vanillas by Monte Carlo, reporting each gap in standard errors.
+
+`vsm barrier` prices a down-and-out and an up-and-out call, both 30 days with the strike at the forward, three ways: under local vol, under the day's Heston fit, and under flat Black at the 30-day ATM vol. All three use the same seed, and the flat price is also checked against the closed form. Local vol reprices every vanilla of its surface by construction, so where it and Heston disagree on a barrier it is about the dynamics, not the fit. Local vol's forward smile flattens as time passes, so it puts less weight on paths that move far and then come back than Heston does. That matters most for knock-outs. Heston's own fit errors are shown next to its price.
+
+## Variance risk premium
+
+The 30-day implied variance is the variance-swap rate of each gated surface: 2 times the integral of OTM prices over K^2, per slice, interpolated linearly in total variance to exactly 30 days, and never extrapolated. DVOL squared gives the long history from 2021-03. Realized variance is the sum of squared hourly log returns of the perpetual over the next 30 days, annualized. The study reports the mean, median, Newey-West t-statistic, share positive and a by-year table. The lag count covers the windows' overlap.
+
+## Straddles
+
+A short ATM-forward straddle per entry, delta-hedged daily with the perpetual, paying funding, fees by date and slippage, and settled at Deribit's delivery price. The design is in `docs/decisions.md`, M5, and was frozen before any result was computed. Each trade's gross P&L is compared with its theoretical gamma P&L, -sum 1/2 Gamma P^2 (r^2 - sigma^2 dt), and AC-H-02 asks for R^2 of at least 0.8 across trades. The study reports the result whatever its sign (rule 15).
+
+## Sticky strike or sticky delta
+
+Daily changes in the 30-day IV, at a fixed strike and at a fixed log-moneyness, are regressed on the 30-day forward's log return, with Newey-West intervals. A slope indistinguishable from zero at the fixed strike, with a negative one at fixed moneyness, means sticky strike. The reverse means sticky delta.
+
 ## SABR
 
 SABR is Hagan's expansion per expiry with beta fixed at 1 (D-05). It fits one expiry at a time, so it does far better than Heston on these smiles, close to SVI on the first real day, but its slices have no arbitrage guarantee and no link across expiries. Beta 0.5 fit better on that day, 19 bp against 26 bp across slices, and the sensitivity table tracks this.

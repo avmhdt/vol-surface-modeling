@@ -1,0 +1,7 @@
+{
+  "fee_source": "https://support.deribit.com/hc/en-us/articles/25944746248989-Fees",
+  "hedge": "entry_iv",
+  "source": "recorder_daily",
+  "trades": 0,
+  "underlying": "BTC"
+}
