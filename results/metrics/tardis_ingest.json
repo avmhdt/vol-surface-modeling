@@ -359,6 +359,54 @@
     "seconds": 61.07628044800367,
     "total_bytes": 2154069812
   },
+  "2022-09-01": {
+    "bytes_read": 553648128,
+    "decompressed_bytes": 2280369551,
+    "inversions": 0,
+    "last_local_ts_us": 1662020563381010,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1372,
+    "rows_read": 11767499,
+    "seconds": 55.42628277398762,
+    "total_bytes": 1828429315
+  },
+  "2022-10-01": {
+    "bytes_read": 403701760,
+    "decompressed_bytes": 1613035058,
+    "inversions": 0,
+    "last_local_ts_us": 1664612780629973,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1190,
+    "rows_read": 8362172,
+    "seconds": 40.44252247698023,
+    "total_bytes": 1149890572
+  },
+  "2022-11-01": {
+    "bytes_read": 427819008,
+    "decompressed_bytes": 1746592112,
+    "inversions": 0,
+    "last_local_ts_us": 1667291145118651,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1230,
+    "rows_read": 9004305,
+    "seconds": 42.902358052000636,
+    "total_bytes": 1309995453
+  },
+  "2022-12-01": {
+    "bytes_read": 343932928,
+    "decompressed_bytes": 1433612137,
+    "inversions": 0,
+    "last_local_ts_us": 1669883443216183,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1204,
+    "rows_read": 7389180,
+    "seconds": 34.455560541013256,
+    "total_bytes": 1056295995
+  },
   "2023-01-01": {
     "bytes_read": 251658240,
     "decompressed_bytes": 1066362698,
@@ -371,6 +419,30 @@
     "seconds": 25.249174812999627,
     "total_bytes": 708138577
   },
+  "2023-02-01": {
+    "bytes_read": 372244480,
+    "decompressed_bytes": 1547096298,
+    "inversions": 0,
+    "last_local_ts_us": 1675239976969418,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1172,
+    "rows_read": 7899784,
+    "seconds": 37.30325745602022,
+    "total_bytes": 1165334838
+  },
+  "2023-03-01": {
+    "bytes_read": 433061888,
+    "decompressed_bytes": 1845507396,
+    "inversions": 0,
+    "last_local_ts_us": 1677659397336565,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1212,
+    "rows_read": 9433403,
+    "seconds": 43.35421465302352,
+    "total_bytes": 1222291677
+  },
   "2023-04-01": {
     "bytes_read": 369098752,
     "decompressed_bytes": 1501713843,
@@ -382,6 +454,66 @@
     "rows_read": 7696663,
     "seconds": 36.98189073499998,
     "total_bytes": 1041776676
+  },
+  "2023-05-01": {
+    "bytes_read": 444596224,
+    "decompressed_bytes": 1833365267,
+    "inversions": 0,
+    "last_local_ts_us": 1682929298102369,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1482,
+    "rows_read": 9451069,
+    "seconds": 44.562469850992784,
+    "total_bytes": 1311272445
+  },
+  "2023-06-01": {
+    "bytes_read": 378535936,
+    "decompressed_bytes": 1582339367,
+    "inversions": 0,
+    "last_local_ts_us": 1685607705152714,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1522,
+    "rows_read": 8210072,
+    "seconds": 37.974264727992704,
+    "total_bytes": 1209538045
+  },
+  "2023-07-01": {
+    "bytes_read": 429916160,
+    "decompressed_bytes": 1741139797,
+    "inversions": 0,
+    "last_local_ts_us": 1688199604559922,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1500,
+    "rows_read": 9024990,
+    "seconds": 43.07282317001955,
+    "total_bytes": 1215384259
+  },
+  "2023-08-01": {
+    "bytes_read": 495976448,
+    "decompressed_bytes": 2045480598,
+    "inversions": 0,
+    "last_local_ts_us": 1690878480252061,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1404,
+    "rows_read": 10305192,
+    "seconds": 49.677998135011876,
+    "total_bytes": 1432332561
+  },
+  "2023-09-01": {
+    "bytes_read": 439353344,
+    "decompressed_bytes": 1782152304,
+    "inversions": 0,
+    "last_local_ts_us": 1693556535496352,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1442,
+    "rows_read": 9129486,
+    "seconds": 44.04924733799999,
+    "total_bytes": 1564064489
   },
   "2026-10-01": {
     "bytes_read": 5222957056,
