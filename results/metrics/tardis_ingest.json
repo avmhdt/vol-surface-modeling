@@ -587,6 +587,54 @@
     "seconds": 98.33288406598149,
     "total_bytes": 3053462495
   },
+  "2024-04-01": {
+    "bytes_read": 1174405120,
+    "decompressed_bytes": 4800285262,
+    "inversions": 0,
+    "last_local_ts_us": 1711959625481108,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 2002,
+    "rows_read": 23979445,
+    "seconds": 117.48655825702008,
+    "total_bytes": 3666980222
+  },
+  "2024-05-01": {
+    "bytes_read": 1392508928,
+    "decompressed_bytes": 5789150952,
+    "inversions": 0,
+    "last_local_ts_us": 1714551600854563,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1766,
+    "rows_read": 28574291,
+    "seconds": 139.30671833996894,
+    "total_bytes": 4377762275
+  },
+  "2024-06-01": {
+    "bytes_read": 796917760,
+    "decompressed_bytes": 3369700936,
+    "inversions": 0,
+    "last_local_ts_us": 1717230131895681,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1880,
+    "rows_read": 16972930,
+    "seconds": 79.75304167100694,
+    "total_bytes": 2349579948
+  },
+  "2024-07-01": {
+    "bytes_read": 973078528,
+    "decompressed_bytes": 4122982712,
+    "inversions": 0,
+    "last_local_ts_us": 1719822203790199,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1698,
+    "rows_read": 20387568,
+    "seconds": 97.35268933599582,
+    "total_bytes": 2873210350
+  },
   "2026-10-01": {
     "bytes_read": 5222957056,
     "decompressed_bytes": 20986525444,
