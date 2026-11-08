@@ -635,6 +635,42 @@
     "seconds": 97.35268933599582,
     "total_bytes": 2873210350
   },
+  "2024-08-01": {
+    "bytes_read": 1394606080,
+    "decompressed_bytes": 6079589389,
+    "inversions": 0,
+    "last_local_ts_us": 1722500458856213,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1764,
+    "rows_read": 29735688,
+    "seconds": 139.50919770100154,
+    "total_bytes": 4503092950
+  },
+  "2024-09-01": {
+    "bytes_read": 1109393408,
+    "decompressed_bytes": 4487321660,
+    "inversions": 0,
+    "last_local_ts_us": 1725178806018791,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1668,
+    "rows_read": 22157148,
+    "seconds": 111.00658649305115,
+    "total_bytes": 3825079798
+  },
+  "2024-10-01": {
+    "bytes_read": 1317011456,
+    "decompressed_bytes": 5585380349,
+    "inversions": 0,
+    "last_local_ts_us": 1727770929174710,
+    "max_regression_ms": 0.0,
+    "reached_end": true,
+    "rows_kept": 1436,
+    "rows_read": 27496937,
+    "seconds": 131.7600002150284,
+    "total_bytes": 5265214452
+  },
   "2026-10-01": {
     "bytes_read": 5222957056,
     "decompressed_bytes": 20986525444,
