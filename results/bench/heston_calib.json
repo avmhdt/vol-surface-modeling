@@ -4,7 +4,7 @@
   "target_seconds": 1.0,
   "underlyings": {
     "BTC": {
-      "days": 23,
+      "days": 68,
       "details": [
         {
           "converged": true,
@@ -12,7 +12,7 @@
           "jacobians": 8,
           "n_quotes": 73,
           "rmse_iv_bp": 227.2,
-          "seconds": 0.0301,
+          "seconds": 0.0274,
           "snapshot": "deribit-BTC-20200301T0815Z"
         },
         {
@@ -21,7 +21,7 @@
           "jacobians": 11,
           "n_quotes": 93,
           "rmse_iv_bp": 404.4,
-          "seconds": 0.0424,
+          "seconds": 0.041,
           "snapshot": "deribit-BTC-20200401T0815Z"
         },
         {
@@ -30,7 +30,7 @@
           "jacobians": 11,
           "n_quotes": 95,
           "rmse_iv_bp": 412.8,
-          "seconds": 0.0498,
+          "seconds": 0.0468,
           "snapshot": "deribit-BTC-20200501T0815Z"
         },
         {
@@ -39,7 +39,7 @@
           "jacobians": 8,
           "n_quotes": 93,
           "rmse_iv_bp": 278.3,
-          "seconds": 0.0284,
+          "seconds": 0.0297,
           "snapshot": "deribit-BTC-20200601T0815Z"
         },
         {
@@ -48,7 +48,7 @@
           "jacobians": 9,
           "n_quotes": 90,
           "rmse_iv_bp": 204.3,
-          "seconds": 0.0376,
+          "seconds": 0.0352,
           "snapshot": "deribit-BTC-20200701T0815Z"
         },
         {
@@ -57,7 +57,7 @@
           "jacobians": 19,
           "n_quotes": 93,
           "rmse_iv_bp": 390.8,
-          "seconds": 0.0682,
+          "seconds": 0.067,
           "snapshot": "deribit-BTC-20200801T0815Z"
         },
         {
@@ -66,7 +66,7 @@
           "jacobians": 10,
           "n_quotes": 118,
           "rmse_iv_bp": 405.8,
-          "seconds": 0.0478,
+          "seconds": 0.0463,
           "snapshot": "deribit-BTC-20200901T0815Z"
         },
         {
@@ -75,8 +75,26 @@
           "jacobians": 12,
           "n_quotes": 93,
           "rmse_iv_bp": 365.7,
-          "seconds": 0.0498,
+          "seconds": 0.0482,
           "snapshot": "deribit-BTC-20201001T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 22,
+          "jacobians": 19,
+          "n_quotes": 132,
+          "rmse_iv_bp": 355.4,
+          "seconds": 0.0844,
+          "snapshot": "deribit-BTC-20201101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 28,
+          "jacobians": 20,
+          "n_quotes": 144,
+          "rmse_iv_bp": 443.6,
+          "seconds": 0.1109,
+          "snapshot": "deribit-BTC-20201201T0815Z"
         },
         {
           "converged": true,
@@ -84,8 +102,26 @@
           "jacobians": 14,
           "n_quotes": 108,
           "rmse_iv_bp": 491.5,
-          "seconds": 0.0651,
+          "seconds": 0.0628,
           "snapshot": "deribit-BTC-20210101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 37,
+          "jacobians": 29,
+          "n_quotes": 140,
+          "rmse_iv_bp": 437.2,
+          "seconds": 0.1584,
+          "snapshot": "deribit-BTC-20210201T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 37,
+          "jacobians": 29,
+          "n_quotes": 147,
+          "rmse_iv_bp": 521.9,
+          "seconds": 0.1613,
+          "snapshot": "deribit-BTC-20210301T0815Z"
         },
         {
           "converged": true,
@@ -93,7 +129,7 @@
           "jacobians": 11,
           "n_quotes": 115,
           "rmse_iv_bp": 278.8,
-          "seconds": 0.055,
+          "seconds": 0.0554,
           "snapshot": "deribit-BTC-20210401T0815Z"
         },
         {
@@ -102,8 +138,17 @@
           "jacobians": 10,
           "n_quotes": 125,
           "rmse_iv_bp": 330.6,
-          "seconds": 0.0528,
+          "seconds": 0.0496,
           "snapshot": "deribit-BTC-20210501T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 17,
+          "jacobians": 13,
+          "n_quotes": 131,
+          "rmse_iv_bp": 528.3,
+          "seconds": 0.0753,
+          "snapshot": "deribit-BTC-20210601T0815Z"
         },
         {
           "converged": true,
@@ -111,7 +156,7 @@
           "jacobians": 35,
           "n_quotes": 127,
           "rmse_iv_bp": 455.1,
-          "seconds": 0.1982,
+          "seconds": 0.2083,
           "snapshot": "deribit-BTC-20210701T0815Z"
         },
         {
@@ -120,7 +165,7 @@
           "jacobians": 14,
           "n_quotes": 140,
           "rmse_iv_bp": 340.2,
-          "seconds": 0.0822,
+          "seconds": 0.0786,
           "snapshot": "deribit-BTC-20210801T0815Z"
         },
         {
@@ -129,7 +174,7 @@
           "jacobians": 10,
           "n_quotes": 128,
           "rmse_iv_bp": 161.6,
-          "seconds": 0.0569,
+          "seconds": 0.0543,
           "snapshot": "deribit-BTC-20210901T0815Z"
         },
         {
@@ -138,8 +183,26 @@
           "jacobians": 12,
           "n_quotes": 122,
           "rmse_iv_bp": 359.5,
-          "seconds": 0.0691,
+          "seconds": 0.0693,
           "snapshot": "deribit-BTC-20211001T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 13,
+          "jacobians": 10,
+          "n_quotes": 160,
+          "rmse_iv_bp": 202.6,
+          "seconds": 0.0577,
+          "snapshot": "deribit-BTC-20211101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 20,
+          "jacobians": 16,
+          "n_quotes": 117,
+          "rmse_iv_bp": 157.3,
+          "seconds": 0.0752,
+          "snapshot": "deribit-BTC-20211201T0815Z"
         },
         {
           "converged": true,
@@ -147,8 +210,26 @@
           "jacobians": 9,
           "n_quotes": 106,
           "rmse_iv_bp": 133.2,
-          "seconds": 0.0512,
+          "seconds": 0.0487,
           "snapshot": "deribit-BTC-20220101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 13,
+          "jacobians": 11,
+          "n_quotes": 114,
+          "rmse_iv_bp": 249.5,
+          "seconds": 0.0546,
+          "snapshot": "deribit-BTC-20220201T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 28,
+          "jacobians": 21,
+          "n_quotes": 124,
+          "rmse_iv_bp": 253.9,
+          "seconds": 0.1169,
+          "snapshot": "deribit-BTC-20220301T0815Z"
         },
         {
           "converged": true,
@@ -156,7 +237,7 @@
           "jacobians": 6,
           "n_quotes": 132,
           "rmse_iv_bp": 98.4,
-          "seconds": 0.0412,
+          "seconds": 0.0329,
           "snapshot": "deribit-BTC-20220401T0815Z"
         },
         {
@@ -165,8 +246,71 @@
           "jacobians": 8,
           "n_quotes": 110,
           "rmse_iv_bp": 143.6,
-          "seconds": 0.0411,
+          "seconds": 0.0413,
           "snapshot": "deribit-BTC-20220501T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 11,
+          "jacobians": 9,
+          "n_quotes": 133,
+          "rmse_iv_bp": 110.3,
+          "seconds": 0.0414,
+          "snapshot": "deribit-BTC-20220601T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 26,
+          "jacobians": 21,
+          "n_quotes": 138,
+          "rmse_iv_bp": 282.7,
+          "seconds": 0.1027,
+          "snapshot": "deribit-BTC-20220701T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 13,
+          "jacobians": 11,
+          "n_quotes": 189,
+          "rmse_iv_bp": 100.6,
+          "seconds": 0.06,
+          "snapshot": "deribit-BTC-20220801T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 15,
+          "jacobians": 13,
+          "n_quotes": 171,
+          "rmse_iv_bp": 182.8,
+          "seconds": 0.0673,
+          "snapshot": "deribit-BTC-20220901T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 11,
+          "jacobians": 9,
+          "n_quotes": 143,
+          "rmse_iv_bp": 206.9,
+          "seconds": 0.0494,
+          "snapshot": "deribit-BTC-20221001T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 13,
+          "jacobians": 9,
+          "n_quotes": 153,
+          "rmse_iv_bp": 164.4,
+          "seconds": 0.057,
+          "snapshot": "deribit-BTC-20221101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 10,
+          "jacobians": 8,
+          "n_quotes": 152,
+          "rmse_iv_bp": 236.9,
+          "seconds": 0.0425,
+          "snapshot": "deribit-BTC-20221201T0815Z"
         },
         {
           "converged": true,
@@ -174,8 +318,26 @@
           "jacobians": 15,
           "n_quotes": 107,
           "rmse_iv_bp": 153.1,
-          "seconds": 0.0884,
+          "seconds": 0.0818,
           "snapshot": "deribit-BTC-20230101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 13,
+          "jacobians": 11,
+          "n_quotes": 159,
+          "rmse_iv_bp": 121.5,
+          "seconds": 0.0514,
+          "snapshot": "deribit-BTC-20230201T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 16,
+          "jacobians": 13,
+          "n_quotes": 160,
+          "rmse_iv_bp": 130.7,
+          "seconds": 0.0641,
+          "snapshot": "deribit-BTC-20230301T0815Z"
         },
         {
           "converged": true,
@@ -183,8 +345,197 @@
           "jacobians": 14,
           "n_quotes": 158,
           "rmse_iv_bp": 205.3,
-          "seconds": 0.0691,
+          "seconds": 0.0656,
           "snapshot": "deribit-BTC-20230401T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 13,
+          "jacobians": 10,
+          "n_quotes": 221,
+          "rmse_iv_bp": 155.3,
+          "seconds": 0.0666,
+          "snapshot": "deribit-BTC-20230501T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 13,
+          "jacobians": 10,
+          "n_quotes": 203,
+          "rmse_iv_bp": 193.3,
+          "seconds": 0.0669,
+          "snapshot": "deribit-BTC-20230601T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 14,
+          "jacobians": 11,
+          "n_quotes": 192,
+          "rmse_iv_bp": 183.0,
+          "seconds": 0.0711,
+          "snapshot": "deribit-BTC-20230701T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 13,
+          "jacobians": 10,
+          "n_quotes": 183,
+          "rmse_iv_bp": 211.9,
+          "seconds": 0.0624,
+          "snapshot": "deribit-BTC-20230801T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 11,
+          "jacobians": 8,
+          "n_quotes": 191,
+          "rmse_iv_bp": 145.4,
+          "seconds": 0.0542,
+          "snapshot": "deribit-BTC-20230901T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 13,
+          "jacobians": 10,
+          "n_quotes": 151,
+          "rmse_iv_bp": 160.3,
+          "seconds": 0.0615,
+          "snapshot": "deribit-BTC-20231001T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 11,
+          "jacobians": 8,
+          "n_quotes": 245,
+          "rmse_iv_bp": 144.2,
+          "seconds": 0.0551,
+          "snapshot": "deribit-BTC-20231101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 12,
+          "jacobians": 9,
+          "n_quotes": 275,
+          "rmse_iv_bp": 183.1,
+          "seconds": 0.066,
+          "snapshot": "deribit-BTC-20231201T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 11,
+          "jacobians": 8,
+          "n_quotes": 256,
+          "rmse_iv_bp": 448.8,
+          "seconds": 0.0617,
+          "snapshot": "deribit-BTC-20240101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 12,
+          "jacobians": 9,
+          "n_quotes": 253,
+          "rmse_iv_bp": 87.5,
+          "seconds": 0.06,
+          "snapshot": "deribit-BTC-20240201T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 15,
+          "jacobians": 13,
+          "n_quotes": 332,
+          "rmse_iv_bp": 214.9,
+          "seconds": 0.0854,
+          "snapshot": "deribit-BTC-20240301T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 21,
+          "jacobians": 17,
+          "n_quotes": 344,
+          "rmse_iv_bp": 144.0,
+          "seconds": 0.1268,
+          "snapshot": "deribit-BTC-20240401T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 19,
+          "jacobians": 17,
+          "n_quotes": 290,
+          "rmse_iv_bp": 559.1,
+          "seconds": 0.0989,
+          "snapshot": "deribit-BTC-20240501T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 15,
+          "jacobians": 12,
+          "n_quotes": 244,
+          "rmse_iv_bp": 112.7,
+          "seconds": 0.0774,
+          "snapshot": "deribit-BTC-20240601T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 12,
+          "jacobians": 10,
+          "n_quotes": 238,
+          "rmse_iv_bp": 250.2,
+          "seconds": 0.0643,
+          "snapshot": "deribit-BTC-20240701T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 11,
+          "jacobians": 9,
+          "n_quotes": 245,
+          "rmse_iv_bp": 162.5,
+          "seconds": 0.0623,
+          "snapshot": "deribit-BTC-20240801T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 9,
+          "jacobians": 7,
+          "n_quotes": 265,
+          "rmse_iv_bp": 239.6,
+          "seconds": 0.0567,
+          "snapshot": "deribit-BTC-20240901T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 10,
+          "jacobians": 8,
+          "n_quotes": 224,
+          "rmse_iv_bp": 179.9,
+          "seconds": 0.0529,
+          "snapshot": "deribit-BTC-20241001T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 12,
+          "jacobians": 10,
+          "n_quotes": 243,
+          "rmse_iv_bp": 655.3,
+          "seconds": 0.0649,
+          "snapshot": "deribit-BTC-20241101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 16,
+          "jacobians": 13,
+          "n_quotes": 258,
+          "rmse_iv_bp": 123.6,
+          "seconds": 0.0874,
+          "snapshot": "deribit-BTC-20241201T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 15,
+          "jacobians": 12,
+          "n_quotes": 254,
+          "rmse_iv_bp": 167.1,
+          "seconds": 0.0761,
+          "snapshot": "deribit-BTC-20250101T0815Z"
         },
         {
           "converged": true,
@@ -192,7 +543,7 @@
           "jacobians": 15,
           "n_quotes": 282,
           "rmse_iv_bp": 91.8,
-          "seconds": 0.0906,
+          "seconds": 0.0863,
           "snapshot": "deribit-BTC-20261001T0815Z"
         },
         {
@@ -201,7 +552,7 @@
           "jacobians": 17,
           "n_quotes": 313,
           "rmse_iv_bp": 151.9,
-          "seconds": 0.1251,
+          "seconds": 0.1146,
           "snapshot": "deribit-BTC-20261101T2215Z"
         },
         {
@@ -210,19 +561,73 @@
           "jacobians": 10,
           "n_quotes": 284,
           "rmse_iv_bp": 115.2,
-          "seconds": 0.0613,
+          "seconds": 0.061,
           "snapshot": "deribit-BTC-20261102T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 11,
+          "jacobians": 10,
+          "n_quotes": 269,
+          "rmse_iv_bp": 123.6,
+          "seconds": 0.06,
+          "snapshot": "deribit-BTC-20261103T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 12,
+          "jacobians": 11,
+          "n_quotes": 265,
+          "rmse_iv_bp": 91.2,
+          "seconds": 0.0613,
+          "snapshot": "deribit-BTC-20261104T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 16,
+          "jacobians": 13,
+          "n_quotes": 285,
+          "rmse_iv_bp": 113.3,
+          "seconds": 0.0897,
+          "snapshot": "deribit-BTC-20261105T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 11,
+          "jacobians": 10,
+          "n_quotes": 260,
+          "rmse_iv_bp": 124.0,
+          "seconds": 0.0545,
+          "snapshot": "deribit-BTC-20261106T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 15,
+          "jacobians": 13,
+          "n_quotes": 258,
+          "rmse_iv_bp": 140.5,
+          "seconds": 0.0775,
+          "snapshot": "deribit-BTC-20261107T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 13,
+          "jacobians": 12,
+          "n_quotes": 277,
+          "rmse_iv_bp": 115.6,
+          "seconds": 0.0703,
+          "snapshot": "deribit-BTC-20261108T0815Z"
         }
       ],
       "enough_days": true,
-      "max_seconds": 0.1982202100007271,
-      "median_evaluations": 14.0,
-      "median_rmse_iv_bp": 278.3,
-      "median_seconds": 0.05495025999880454,
+      "max_seconds": 0.208330380031839,
+      "median_evaluations": 13.0,
+      "median_rmse_iv_bp": 188.2,
+      "median_seconds": 0.0626030815183185,
       "under_target": true
     },
     "ETH": {
-      "days": 23,
+      "days": 68,
       "details": [
         {
           "converged": true,
@@ -230,7 +635,7 @@
           "jacobians": 23,
           "n_quotes": 49,
           "rmse_iv_bp": 93.5,
-          "seconds": 0.05,
+          "seconds": 0.0494,
           "snapshot": "deribit-ETH-20200301T0815Z"
         },
         {
@@ -239,7 +644,7 @@
           "jacobians": 36,
           "n_quotes": 71,
           "rmse_iv_bp": 354.1,
-          "seconds": 0.111,
+          "seconds": 0.1048,
           "snapshot": "deribit-ETH-20200401T0815Z"
         },
         {
@@ -248,7 +653,7 @@
           "jacobians": 13,
           "n_quotes": 68,
           "rmse_iv_bp": 370.2,
-          "seconds": 0.0438,
+          "seconds": 0.0419,
           "snapshot": "deribit-ETH-20200501T0815Z"
         },
         {
@@ -257,7 +662,7 @@
           "jacobians": 18,
           "n_quotes": 53,
           "rmse_iv_bp": 326.8,
-          "seconds": 0.0482,
+          "seconds": 0.0425,
           "snapshot": "deribit-ETH-20200601T0815Z"
         },
         {
@@ -266,7 +671,7 @@
           "jacobians": 11,
           "n_quotes": 81,
           "rmse_iv_bp": 193.6,
-          "seconds": 0.0425,
+          "seconds": 0.0417,
           "snapshot": "deribit-ETH-20200701T0815Z"
         },
         {
@@ -275,7 +680,7 @@
           "jacobians": 23,
           "n_quotes": 102,
           "rmse_iv_bp": 246.7,
-          "seconds": 0.0895,
+          "seconds": 0.0888,
           "snapshot": "deribit-ETH-20200801T0815Z"
         },
         {
@@ -284,7 +689,7 @@
           "jacobians": 21,
           "n_quotes": 71,
           "rmse_iv_bp": 1076.9,
-          "seconds": 0.0963,
+          "seconds": 0.0936,
           "snapshot": "deribit-ETH-20200901T0815Z"
         },
         {
@@ -293,8 +698,26 @@
           "jacobians": 11,
           "n_quotes": 120,
           "rmse_iv_bp": 445.6,
-          "seconds": 0.0507,
+          "seconds": 0.0471,
           "snapshot": "deribit-ETH-20201001T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 16,
+          "jacobians": 13,
+          "n_quotes": 134,
+          "rmse_iv_bp": 253.6,
+          "seconds": 0.0648,
+          "snapshot": "deribit-ETH-20201101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 28,
+          "jacobians": 20,
+          "n_quotes": 140,
+          "rmse_iv_bp": 297.1,
+          "seconds": 0.1122,
+          "snapshot": "deribit-ETH-20201201T0815Z"
         },
         {
           "converged": true,
@@ -302,8 +725,26 @@
           "jacobians": 13,
           "n_quotes": 111,
           "rmse_iv_bp": 326.3,
-          "seconds": 0.0481,
+          "seconds": 0.0474,
           "snapshot": "deribit-ETH-20210101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 44,
+          "jacobians": 35,
+          "n_quotes": 115,
+          "rmse_iv_bp": 612.1,
+          "seconds": 0.1667,
+          "snapshot": "deribit-ETH-20210201T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 25,
+          "jacobians": 18,
+          "n_quotes": 129,
+          "rmse_iv_bp": 630.0,
+          "seconds": 0.0969,
+          "snapshot": "deribit-ETH-20210301T0815Z"
         },
         {
           "converged": true,
@@ -311,7 +752,7 @@
           "jacobians": 45,
           "n_quotes": 109,
           "rmse_iv_bp": 261.0,
-          "seconds": 0.2112,
+          "seconds": 0.2058,
           "snapshot": "deribit-ETH-20210401T0815Z"
         },
         {
@@ -320,8 +761,17 @@
           "jacobians": 10,
           "n_quotes": 149,
           "rmse_iv_bp": 450.0,
-          "seconds": 0.064,
+          "seconds": 0.0564,
           "snapshot": "deribit-ETH-20210501T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 54,
+          "jacobians": 43,
+          "n_quotes": 166,
+          "rmse_iv_bp": 729.9,
+          "seconds": 0.2414,
+          "snapshot": "deribit-ETH-20210601T0815Z"
         },
         {
           "converged": true,
@@ -329,7 +779,7 @@
           "jacobians": 12,
           "n_quotes": 127,
           "rmse_iv_bp": 413.0,
-          "seconds": 0.0693,
+          "seconds": 0.0688,
           "snapshot": "deribit-ETH-20210701T0815Z"
         },
         {
@@ -338,7 +788,7 @@
           "jacobians": 8,
           "n_quotes": 120,
           "rmse_iv_bp": 226.7,
-          "seconds": 0.0429,
+          "seconds": 0.0428,
           "snapshot": "deribit-ETH-20210801T0815Z"
         },
         {
@@ -356,8 +806,26 @@
           "jacobians": 19,
           "n_quotes": 144,
           "rmse_iv_bp": 501.8,
-          "seconds": 0.113,
+          "seconds": 0.1061,
           "snapshot": "deribit-ETH-20211001T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 29,
+          "jacobians": 23,
+          "n_quotes": 151,
+          "rmse_iv_bp": 543.0,
+          "seconds": 0.1277,
+          "snapshot": "deribit-ETH-20211101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 25,
+          "jacobians": 19,
+          "n_quotes": 136,
+          "rmse_iv_bp": 395.2,
+          "seconds": 0.0992,
+          "snapshot": "deribit-ETH-20211201T0815Z"
         },
         {
           "converged": true,
@@ -365,8 +833,26 @@
           "jacobians": 12,
           "n_quotes": 132,
           "rmse_iv_bp": 327.1,
-          "seconds": 0.0665,
+          "seconds": 0.0662,
           "snapshot": "deribit-ETH-20220101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 21,
+          "jacobians": 15,
+          "n_quotes": 120,
+          "rmse_iv_bp": 256.4,
+          "seconds": 0.0913,
+          "snapshot": "deribit-ETH-20220201T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 13,
+          "jacobians": 9,
+          "n_quotes": 130,
+          "rmse_iv_bp": 170.9,
+          "seconds": 0.0565,
+          "snapshot": "deribit-ETH-20220301T0815Z"
         },
         {
           "converged": true,
@@ -374,7 +860,7 @@
           "jacobians": 12,
           "n_quotes": 135,
           "rmse_iv_bp": 135.3,
-          "seconds": 0.0756,
+          "seconds": 0.0752,
           "snapshot": "deribit-ETH-20220401T0815Z"
         },
         {
@@ -383,8 +869,71 @@
           "jacobians": 9,
           "n_quotes": 109,
           "rmse_iv_bp": 158.2,
-          "seconds": 0.0465,
+          "seconds": 0.0456,
           "snapshot": "deribit-ETH-20220501T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 10,
+          "jacobians": 8,
+          "n_quotes": 172,
+          "rmse_iv_bp": 168.8,
+          "seconds": 0.0422,
+          "snapshot": "deribit-ETH-20220601T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 23,
+          "jacobians": 18,
+          "n_quotes": 167,
+          "rmse_iv_bp": 481.0,
+          "seconds": 0.1086,
+          "snapshot": "deribit-ETH-20220701T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 21,
+          "jacobians": 15,
+          "n_quotes": 217,
+          "rmse_iv_bp": 391.2,
+          "seconds": 0.1001,
+          "snapshot": "deribit-ETH-20220801T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 31,
+          "jacobians": 26,
+          "n_quotes": 216,
+          "rmse_iv_bp": 744.1,
+          "seconds": 0.1505,
+          "snapshot": "deribit-ETH-20220901T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 13,
+          "jacobians": 10,
+          "n_quotes": 96,
+          "rmse_iv_bp": 211.1,
+          "seconds": 0.0374,
+          "snapshot": "deribit-ETH-20221001T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 12,
+          "jacobians": 10,
+          "n_quotes": 176,
+          "rmse_iv_bp": 208.5,
+          "seconds": 0.0539,
+          "snapshot": "deribit-ETH-20221101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 15,
+          "jacobians": 12,
+          "n_quotes": 147,
+          "rmse_iv_bp": 233.9,
+          "seconds": 0.0649,
+          "snapshot": "deribit-ETH-20221201T0815Z"
         },
         {
           "converged": true,
@@ -392,8 +941,26 @@
           "jacobians": 12,
           "n_quotes": 97,
           "rmse_iv_bp": 240.0,
-          "seconds": 0.0631,
+          "seconds": 0.0617,
           "snapshot": "deribit-ETH-20230101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 10,
+          "jacobians": 8,
+          "n_quotes": 136,
+          "rmse_iv_bp": 116.0,
+          "seconds": 0.0379,
+          "snapshot": "deribit-ETH-20230201T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 13,
+          "jacobians": 11,
+          "n_quotes": 131,
+          "rmse_iv_bp": 125.5,
+          "seconds": 0.0518,
+          "snapshot": "deribit-ETH-20230301T0815Z"
         },
         {
           "converged": true,
@@ -401,8 +968,197 @@
           "jacobians": 18,
           "n_quotes": 114,
           "rmse_iv_bp": 266.3,
-          "seconds": 0.0703,
+          "seconds": 0.0655,
           "snapshot": "deribit-ETH-20230401T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 14,
+          "jacobians": 11,
+          "n_quotes": 163,
+          "rmse_iv_bp": 169.2,
+          "seconds": 0.0698,
+          "snapshot": "deribit-ETH-20230501T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 14,
+          "jacobians": 11,
+          "n_quotes": 143,
+          "rmse_iv_bp": 205.9,
+          "seconds": 0.066,
+          "snapshot": "deribit-ETH-20230601T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 30,
+          "jacobians": 23,
+          "n_quotes": 86,
+          "rmse_iv_bp": 274.0,
+          "seconds": 0.1003,
+          "snapshot": "deribit-ETH-20230701T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 15,
+          "jacobians": 12,
+          "n_quotes": 125,
+          "rmse_iv_bp": 318.8,
+          "seconds": 0.0621,
+          "snapshot": "deribit-ETH-20230801T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 14,
+          "jacobians": 11,
+          "n_quotes": 125,
+          "rmse_iv_bp": 166.7,
+          "seconds": 0.065,
+          "snapshot": "deribit-ETH-20230901T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 17,
+          "jacobians": 12,
+          "n_quotes": 101,
+          "rmse_iv_bp": 268.0,
+          "seconds": 0.0714,
+          "snapshot": "deribit-ETH-20231001T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 12,
+          "jacobians": 10,
+          "n_quotes": 152,
+          "rmse_iv_bp": 192.8,
+          "seconds": 0.0539,
+          "snapshot": "deribit-ETH-20231101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 10,
+          "jacobians": 7,
+          "n_quotes": 181,
+          "rmse_iv_bp": 208.1,
+          "seconds": 0.0505,
+          "snapshot": "deribit-ETH-20231201T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 19,
+          "jacobians": 16,
+          "n_quotes": 143,
+          "rmse_iv_bp": 421.6,
+          "seconds": 0.0743,
+          "snapshot": "deribit-ETH-20240101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 8,
+          "jacobians": 7,
+          "n_quotes": 173,
+          "rmse_iv_bp": 123.4,
+          "seconds": 0.0349,
+          "snapshot": "deribit-ETH-20240201T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 13,
+          "jacobians": 11,
+          "n_quotes": 246,
+          "rmse_iv_bp": 285.6,
+          "seconds": 0.0691,
+          "snapshot": "deribit-ETH-20240301T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 15,
+          "jacobians": 12,
+          "n_quotes": 310,
+          "rmse_iv_bp": 229.9,
+          "seconds": 0.0854,
+          "snapshot": "deribit-ETH-20240401T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 20,
+          "jacobians": 16,
+          "n_quotes": 254,
+          "rmse_iv_bp": 703.0,
+          "seconds": 0.1013,
+          "snapshot": "deribit-ETH-20240501T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 18,
+          "jacobians": 14,
+          "n_quotes": 234,
+          "rmse_iv_bp": 99.2,
+          "seconds": 0.0917,
+          "snapshot": "deribit-ETH-20240601T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 12,
+          "jacobians": 10,
+          "n_quotes": 242,
+          "rmse_iv_bp": 121.2,
+          "seconds": 0.0668,
+          "snapshot": "deribit-ETH-20240701T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 12,
+          "jacobians": 9,
+          "n_quotes": 208,
+          "rmse_iv_bp": 113.4,
+          "seconds": 0.0575,
+          "snapshot": "deribit-ETH-20240801T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 10,
+          "jacobians": 7,
+          "n_quotes": 212,
+          "rmse_iv_bp": 250.5,
+          "seconds": 0.0576,
+          "snapshot": "deribit-ETH-20240901T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 23,
+          "jacobians": 18,
+          "n_quotes": 192,
+          "rmse_iv_bp": 188.5,
+          "seconds": 0.1114,
+          "snapshot": "deribit-ETH-20241001T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 18,
+          "jacobians": 16,
+          "n_quotes": 171,
+          "rmse_iv_bp": 300.8,
+          "seconds": 0.08,
+          "snapshot": "deribit-ETH-20241101T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 9,
+          "jacobians": 8,
+          "n_quotes": 211,
+          "rmse_iv_bp": 212.0,
+          "seconds": 0.0417,
+          "snapshot": "deribit-ETH-20241201T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 14,
+          "jacobians": 11,
+          "n_quotes": 229,
+          "rmse_iv_bp": 169.2,
+          "seconds": 0.0659,
+          "snapshot": "deribit-ETH-20250101T0815Z"
         },
         {
           "converged": true,
@@ -410,7 +1166,7 @@
           "jacobians": 14,
           "n_quotes": 235,
           "rmse_iv_bp": 116.5,
-          "seconds": 0.0856,
+          "seconds": 0.0862,
           "snapshot": "deribit-ETH-20261001T0815Z"
         },
         {
@@ -419,7 +1175,7 @@
           "jacobians": 14,
           "n_quotes": 254,
           "rmse_iv_bp": 285.6,
-          "seconds": 0.097,
+          "seconds": 0.0958,
           "snapshot": "deribit-ETH-20261101T2215Z"
         },
         {
@@ -428,15 +1184,69 @@
           "jacobians": 20,
           "n_quotes": 235,
           "rmse_iv_bp": 225.8,
-          "seconds": 0.1248,
+          "seconds": 0.1219,
           "snapshot": "deribit-ETH-20261102T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 8,
+          "jacobians": 7,
+          "n_quotes": 205,
+          "rmse_iv_bp": 185.9,
+          "seconds": 0.037,
+          "snapshot": "deribit-ETH-20261103T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 9,
+          "jacobians": 8,
+          "n_quotes": 209,
+          "rmse_iv_bp": 167.4,
+          "seconds": 0.0415,
+          "snapshot": "deribit-ETH-20261104T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 13,
+          "jacobians": 11,
+          "n_quotes": 239,
+          "rmse_iv_bp": 142.8,
+          "seconds": 0.0686,
+          "snapshot": "deribit-ETH-20261105T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 16,
+          "jacobians": 14,
+          "n_quotes": 211,
+          "rmse_iv_bp": 274.0,
+          "seconds": 0.075,
+          "snapshot": "deribit-ETH-20261106T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 28,
+          "jacobians": 27,
+          "n_quotes": 210,
+          "rmse_iv_bp": 249.1,
+          "seconds": 0.1329,
+          "snapshot": "deribit-ETH-20261107T0815Z"
+        },
+        {
+          "converged": true,
+          "evaluations": 11,
+          "jacobians": 10,
+          "n_quotes": 233,
+          "rmse_iv_bp": 222.1,
+          "seconds": 0.0589,
+          "snapshot": "deribit-ETH-20261108T0815Z"
         }
       ],
       "enough_days": true,
-      "max_seconds": 0.21115416000066034,
-      "median_evaluations": 17.0,
-      "median_rmse_iv_bp": 266.3,
-      "median_seconds": 0.06645311499960371,
+      "max_seconds": 0.24141435394994915,
+      "median_evaluations": 16.0,
+      "median_rmse_iv_bp": 247.89999999999998,
+      "median_seconds": 0.0665410230285488,
       "under_target": true
     }
   }

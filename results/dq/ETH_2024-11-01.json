@@ -1,0 +1,101 @@
+{
+  "ask_below_intrinsic": 0,
+  "by_reason": {
+    "bound_violation": 3,
+    "iv_fail": 26,
+    "kept": 325,
+    "no_ask": 21,
+    "short_expiry": 128,
+    "wide_market": 76,
+    "zero_bid": 95
+  },
+  "date": "2024-11-01",
+  "forward_gap_flagged_expiries": [],
+  "forward_methods": {
+    "deribit_underlying": 3,
+    "parity_wls": 9
+  },
+  "kept": 325,
+  "liquid": 171,
+  "mark_iv_check": {
+    "median_abs_diff_vol_pts": 0.03674397540031071,
+    "n": 268,
+    "warning": false
+  },
+  "per_expiry": {
+    "2024-11-02T08:00Z": {
+      "short_expiry": 64
+    },
+    "2024-11-03T08:00Z": {
+      "short_expiry": 64
+    },
+    "2024-11-04T08:00Z": {
+      "wide_market": 23,
+      "zero_bid": 29
+    },
+    "2024-11-08T08:00Z": {
+      "bound_violation": 2,
+      "iv_fail": 8,
+      "kept": 28,
+      "no_ask": 5,
+      "wide_market": 8,
+      "zero_bid": 7
+    },
+    "2024-11-15T08:00Z": {
+      "iv_fail": 1,
+      "kept": 30,
+      "no_ask": 8,
+      "wide_market": 3
+    },
+    "2024-11-22T08:00Z": {
+      "iv_fail": 3,
+      "kept": 23,
+      "wide_market": 3,
+      "zero_bid": 9
+    },
+    "2024-11-29T08:00Z": {
+      "iv_fail": 1,
+      "kept": 27,
+      "wide_market": 6,
+      "zero_bid": 6
+    },
+    "2024-12-27T08:00Z": {
+      "bound_violation": 1,
+      "iv_fail": 10,
+      "kept": 63,
+      "no_ask": 1,
+      "wide_market": 11,
+      "zero_bid": 20
+    },
+    "2025-01-31T08:00Z": {
+      "iv_fail": 1,
+      "kept": 33,
+      "wide_market": 3,
+      "zero_bid": 3
+    },
+    "2025-03-28T08:00Z": {
+      "iv_fail": 2,
+      "kept": 52,
+      "no_ask": 2,
+      "wide_market": 8,
+      "zero_bid": 6
+    },
+    "2025-06-27T08:00Z": {
+      "kept": 46,
+      "no_ask": 4,
+      "wide_market": 6,
+      "zero_bid": 8
+    },
+    "2025-09-26T08:00Z": {
+      "kept": 23,
+      "no_ask": 1,
+      "wide_market": 5,
+      "zero_bid": 7
+    }
+  },
+  "rows": 674,
+  "snapshot": "20241101T0815Z",
+  "snapshot_flagged": false,
+  "source": "tardis",
+  "underlying": "ETH"
+}

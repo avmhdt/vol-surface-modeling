@@ -10,7 +10,7 @@ sticky delta it is the other way round. The skew is the 30-day SSVI slope at the
 import itertools
 import json
 import math
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
@@ -28,11 +28,14 @@ from vsm.surface.store import load_surface
 from vsm.surface.types import Surface
 from vsm.viz import figures
 
-DAY_NS = 86_400_000_000_000
 TENOR_DAYS = 30.0
 MIN_PAIRS = 10
 SKEW_STEP = 1e-4
 T_CRITICAL = 1.96
+
+
+def _day(surface: Surface) -> date:
+    return datetime.fromtimestamp(surface.as_of_ns / 1e9, UTC).date()
 
 
 def _vol(surface: Surface, k: float, t: float) -> float:
@@ -62,7 +65,8 @@ def sticky_pairs(surfaces: list[Surface]) -> pl.DataFrame:
     t = TENOR_DAYS / 365.0
     rows = []
     for before, after in itertools.pairwise(surfaces):
-        if after.as_of_ns - before.as_of_ns != DAY_NS:
+        # As-of is the latest receive time, so consecutive days are never exactly 24 h apart.
+        if (_day(after) - _day(before)).days != 1:
             continue
         f0 = forward_at(before, t)
         f1 = forward_at(after, t)
