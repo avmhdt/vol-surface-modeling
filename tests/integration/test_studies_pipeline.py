@@ -150,7 +150,10 @@ def test_sticky_regression_and_conclusions() -> None:
 
 def test_sticky_pairs_need_consecutive_days(stored: Path, config: AppConfig) -> None:
     surface = sticky.daily_surfaces(stored, config, "BTC", "2026-11-02", "2026-11-02")[0]
-    later = type(surface)(**{**surface.__dict__, "as_of_ns": surface.as_of_ns + 86_400_000_000_000})
+    # Seven minutes off a whole day, as real as-of times are.
+    later = type(surface)(
+        **{**surface.__dict__, "as_of_ns": surface.as_of_ns + 86_400_000_000_000 - 420_000_000_000}
+    )
     gap = type(surface)(
         **{**surface.__dict__, "as_of_ns": surface.as_of_ns + 3 * 86_400_000_000_000}
     )

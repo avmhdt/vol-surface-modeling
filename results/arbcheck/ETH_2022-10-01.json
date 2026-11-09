@@ -1,0 +1,86 @@
+{
+  "date": "2022-10-01",
+  "density_mass_max_err": 3.1169275827025444e-08,
+  "density_mean_max_err": 1.219024881038422e-13,
+  "dropped": 0,
+  "min_calendar_dw": 0.009743443634150029,
+  "min_g": 0.24165011411912543,
+  "passed": true,
+  "slices": [
+    {
+      "density_mass_err": 1.6401324742787438e-12,
+      "density_mean_err": 8.715250743307479e-14,
+      "expiry": "2022-10-07T08:00Z",
+      "min_calendar_dw": null,
+      "min_g": 0.2861788781623704,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 4.440892098500626e-15,
+      "density_mean_err": 0.0,
+      "expiry": "2022-10-14T08:00Z",
+      "min_calendar_dw": 0.0107641673352556,
+      "min_g": 0.36561323824871667,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 6.972200594645983e-13,
+      "density_mean_err": 1.9984014443252818e-15,
+      "expiry": "2022-10-21T08:00Z",
+      "min_calendar_dw": 0.0104962053532111,
+      "min_g": 0.3178207284256151,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 5.33748600872741e-11,
+      "density_mean_err": 5.484501741648273e-14,
+      "expiry": "2022-10-28T08:00Z",
+      "min_calendar_dw": 0.011645700320965395,
+      "min_g": 0.27279280155014723,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 2.875525262346912e-09,
+      "density_mean_err": 1.219024881038422e-13,
+      "expiry": "2022-11-25T08:00Z",
+      "min_calendar_dw": 0.021282179039090993,
+      "min_g": 0.28917984692070997,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 3.1169275827025444e-08,
+      "density_mean_err": 8.537615059367454e-14,
+      "expiry": "2022-12-30T08:00Z",
+      "min_calendar_dw": 0.0588896640316669,
+      "min_g": 0.24165011411912543,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    }
+  ],
+  "snapshot": "20221001T0815Z",
+  "sources": {
+    "svi": 6
+  },
+  "spline": {
+    "butterfly_violations": 4,
+    "calendar_violations": 0,
+    "slices": 6
+  },
+  "ssvi": {
+    "eta": 1.3033643290160513,
+    "gamma": 0.3493013457470853,
+    "rho": -0.3335140590217984
+  },
+  "underlying": "ETH"
+}

@@ -1,8 +1,8 @@
 {
-  "days": 23,
-  "median_day_svi": 0.9439252336448598,
-  "n_liquid": 3090,
-  "pooled_ssvi": 0.4773462783171521,
-  "pooled_svi": 0.9411003236245955,
+  "days": 68,
+  "median_day_svi": 0.9632686831370738,
+  "n_liquid": 12376,
+  "pooled_ssvi": 0.513251454427925,
+  "pooled_svi": 0.947721396250808,
   "underlying": "BTC"
 }

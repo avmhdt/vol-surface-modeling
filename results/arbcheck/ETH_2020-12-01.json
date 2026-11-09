@@ -1,0 +1,97 @@
+{
+  "date": "2020-12-01",
+  "density_mass_max_err": 2.935563125916474e-09,
+  "density_mean_max_err": 4.080134674566693e-09,
+  "dropped": 1,
+  "min_calendar_dw": 0.01160168024226603,
+  "min_g": 0.16041236308660733,
+  "passed": true,
+  "slices": [
+    {
+      "density_mass_err": 5.652811552181447e-12,
+      "density_mean_err": 9.855971594419088e-11,
+      "expiry": "2020-12-04T08:00Z",
+      "min_calendar_dw": null,
+      "min_g": 0.3016511413504546,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 1.3202772208842362e-12,
+      "density_mean_err": 2.0691715008069878e-10,
+      "expiry": "2020-12-11T08:00Z",
+      "min_calendar_dw": 0.014114978027171314,
+      "min_g": 0.3063614020286566,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 2.152389377840791e-12,
+      "density_mean_err": 1.4420691307748257e-09,
+      "expiry": "2020-12-18T08:00Z",
+      "min_calendar_dw": 0.015262029008380688,
+      "min_g": 0.30436821672073705,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 1.8825985215187302e-10,
+      "density_mean_err": 2.2848922753837542e-10,
+      "expiry": "2020-12-25T08:00Z",
+      "min_calendar_dw": 0.01160168024226603,
+      "min_g": 0.2096233253138966,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 3.752553823233029e-14,
+      "density_mean_err": 4.080134674566693e-09,
+      "expiry": "2021-01-29T08:00Z",
+      "min_calendar_dw": 0.012770369415068261,
+      "min_g": 0.26938765923535635,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 2.935563125916474e-09,
+      "density_mean_err": 4.673527120857557e-10,
+      "expiry": "2021-03-26T08:00Z",
+      "min_calendar_dw": 0.08456814204814386,
+      "min_g": 0.16041236308660733,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    },
+    {
+      "density_mass_err": 5.372369216161132e-13,
+      "density_mean_err": 1.379452108096757e-12,
+      "expiry": "2021-06-25T08:00Z",
+      "min_calendar_dw": 0.0419406407001528,
+      "min_g": 0.27295442069347814,
+      "passed": true,
+      "price_ok": true,
+      "source": "svi"
+    }
+  ],
+  "snapshot": "20201201T0815Z",
+  "sources": {
+    "dropped": 1,
+    "svi": 7
+  },
+  "spline": {
+    "butterfly_violations": 6,
+    "calendar_violations": 0,
+    "slices": 8
+  },
+  "ssvi": {
+    "eta": 1.052814398669171,
+    "gamma": 0.5,
+    "rho": 0.28756568634926133
+  },
+  "underlying": "ETH"
+}
