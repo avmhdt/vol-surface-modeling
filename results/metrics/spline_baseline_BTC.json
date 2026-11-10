@@ -1,8 +1,8 @@
 {
-  "butterfly_violations": 472,
+  "butterfly_violations": 499,
   "calendar_violations": 1,
-  "days": 68,
-  "days_with_spline_violation": 68,
+  "days": 71,
+  "days_with_spline_violation": 71,
   "exported_days_with_violation": 0,
   "share_of_days": 1.0,
   "underlying": "BTC"

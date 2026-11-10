@@ -1,13 +1,13 @@
 {
-  "conclusion": "not enough consecutive daily surfaces (6)",
-  "end": "2026-11-08",
+  "conclusion": "not enough consecutive daily surfaces (7)",
+  "end": "2026-11-10",
   "min_pairs": 10,
-  "pairs": 6,
+  "pairs": 7,
   "start": "2026-11-02",
   "straddle_hedge_error_var": {
     "recorder_daily_entry_iv": null,
-    "tardis_monthly_entry_iv": 0.00012596666212771893,
-    "tardis_monthly_min_variance": 0.0002420980297385528
+    "tardis_monthly_entry_iv": 0.00012355105747450428,
+    "tardis_monthly_min_variance": 0.00023601485903674248
   },
   "tenor_days": 30.0,
   "underlying": "ETH"
