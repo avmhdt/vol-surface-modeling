@@ -12,7 +12,8 @@ Owner and agent decisions for this repo. Owner entries are copied from the portf
 | WRDS (P-11) | No access. OptionMetrics path stays off. |
 | Downloads | Tardis free samples approved. Raw and row-level data stay out of git; aggregates only. |
 | Money | USD 0 for this project. Nothing here is on the approved spend list. |
-| Machine | Toolchain and always-on setup done by the owner. Storage stays on `D:`; free space is checked at each milestone. |
+| Machine | Toolchain and always-on setup done by the owner. Free space is checked at each milestone. Storage was on `D:` until 2026-11-17, when the owner moved the project and WSL to `G:` because `D:` was failing. |
+| AC-W-04 (2026-11-17) | Published as not met, with the outage causes, and thresholds unchanged. The owner's words: "Documented miss, both readings". The hourly share is reported both ways: over whole days with any snapshot, and over only the hours the host was up. The causes are host crashes on 2026-11-11 and 2026-11-12, and the owner's disk migration on 2026-11-17 from 18:17 to 18:58 UTC. |
 | Spec defaults | Every other default in spec section 3 stands. No project 4 default was changed in `DECISIONS.md`. |
 
 ## Spec decisions as they stand
@@ -38,7 +39,16 @@ Owner and agent decisions for this repo. Owner entries are copied from the portf
 - **M1 exit met on 2026-11-02 at 20:15 UTC.** 24 consecutive hourly snapshots, `20261101T2115Z` to `20261102T2015Z`, checked from the files on disk: all 24 present for options and futures on both underlyings, 24 runs in the log with 0 failed datasets, 0 retries and 0 warnings, and an empty gap log. `vsm smoke` passes 22 of 22, CI is green, the nightly live workflow passed, and the first daily history append ran at 12:40 UTC. One run started late: the 15:15 UTC run received its data about 94 s after the hour, against a median of 14 s. That is harmless, because rows inside one snapshot are at most 6.5 s apart against the 120 s staleness limit. The 24 hours ran with WSL clients attached, so they do not show cron surviving a restart, and the planned reboot is the first real test of that.
 - **Recorder start.** First scheduled snapshot: `20261101T2115Z` (2026-11-01 21:15 UTC) for both underlyings, BTC 956 and ETH 786 options. No earlier history exists in this store.
 - **`scripts/schedule_recorder.ps1` is not created.** The spec has it register an "At startup" task that starts WSL. The owner's `setup/always-on.ps1` already registers `Start WSL at boot`, so a second task would only duplicate it. The recorder needs just its cron lines inside WSL, installed by `scripts/deploy_recorder.sh`.
-- **Run-only deploy clone.** Cron runs from a separate clone at `~/deploy/vol-surface-modeling`, with its own `.venv`, pinned to a detached commit. Development stays in the repo on `/mnt/d`. Switching branches there can never change what the next hh:15 run executes, which is how rule 11 ("do not break it") is met. `deploy_recorder.sh` refuses to run within minutes 12 to 20 of the hour, so a deploy lands between scheduled runs.
+- **AC-W-04 is not met, and the cause is the host.** By 2026-11-17, 84 scheduled slots never ran, logged as `not_captured`. 13 were on 2026-11-11, from 07:15 to 19:15 UTC, and 71 ran from 2026-11-12 19:15 to 2026-11-15 17:15 UTC, in two host crashes. That cost 4 of 16 canonical days: 11-11, 11-13, 11-14 and 11-15. The disk migration on 2026-11-17, 18:17 to 18:58 UTC, fell between scheduled runs and cost no slot. While the host was up, 2 runs failed: 2026-11-07 16:15 (DNS failure) and 2026-11-10 09:15 (Deribit HTTP 503).
+
+  | Measure, since 2026-11-01 | BTC and ETH | Required |
+  |---|---|---|
+  | Canonical days | 12 of 16, 75.0% | 90% |
+  | Hourly, whole days with any snapshot | 297 of 335, 88.7% | 95% |
+  | Hourly, only hours the host was up | 297 of 299, 99.3% | 95% |
+
+  The test in `tests/acceptance/test_ac_w_04_recorder.py` keeps the spec's thresholds and fails on the real store.
+- **Run-only deploy clone.** Cron runs from a separate clone at `~/deploy/vol-surface-modeling`, with its own `.venv`, pinned to a detached commit. Development stays in the repo on the Windows drive, `/mnt/g` since 2026-11-17. Switching branches there can never change what the next hh:15 run executes, which is how rule 11 ("do not break it") is met. `deploy_recorder.sh` refuses to run within minutes 12 to 20 of the hour, so a deploy lands between scheduled runs.
 - **Commits come from Windows git.** WSL's global git config has a different email from this repo's history.
 - **Time zone.** WSL's clock is `America/Sao_Paulo`. Cron uses local time, which is harmless for the minute-only hourly line. The daily history line is a nominal 09:40 local (12:40 UTC) and nothing depends on its exact hour. Slots are always computed in UTC in Python.
 - **Off-schedule runs.** A run within 10 minutes after hh:15 files under that slot. Any other run, such as a manual test, files under its own minute and does not count as a scheduled snapshot, so `snapshot_id` never claims a time the data was not taken at.

@@ -304,6 +304,8 @@ def test_coverage_counts_scheduled_captured_and_canonical(
     assert report["hourly_scheduled"] == 5
     assert report["hourly_captured"] == 4
     assert report["hourly_frac_on_up_days"] == 0.8
+    # The 10:15 slot never ran, so it is out of the hours the host was up.
+    assert (report["hourly_scheduled_host_up"], report["hourly_frac_host_up"]) == (4, 1.0)
     assert (report["canonical_days"], report["calendar_days"]) == (1, 1)
     assert recorder.consecutive_hourly(tmp_path, "BTC", 15) == 1
     assert recorder.disk_use_mb(tmp_path) >= 0

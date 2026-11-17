@@ -286,7 +286,7 @@ class TardisConfig(BaseModel):
     window_utc: tuple[str, str] = ("07:45", "08:20")
     max_bytes_per_second: float = Field(default=10_000_000.0, gt=0)
     min_free_gb: float = 100.0
-    free_space_path: str = "/mnt/d"
+    free_space_path: str = "/mnt/g"
     crypto_status_path: str = "~/data/crypto-lob-alpha/status.json"
     max_ingest_p99_us: float = 1000.0
 
