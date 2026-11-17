@@ -384,6 +384,9 @@ def sweep_tickers(client: DeribitClient, data_dir: Path, underlying: str, slot: 
     return len(rows)
 
 
+NOT_CAPTURED = "not_captured"  # no run at all for the slot: the host was down
+
+
 def gaps_path(data_dir: Path) -> Path:
     """The append-only gap log."""
     return storage.raw_dir(data_dir) / "_gaps.csv"
@@ -470,7 +473,7 @@ def _log_gaps(data_dir: Path, summary: RecordSummary, minute_utc: int, now: date
                 "underlying": underlying,
                 "dataset": dataset,
                 "detected_at_utc": stamp,
-                "reason": "not_captured",
+                "reason": NOT_CAPTURED,
             }
             for label in find_gaps(data_dir, dataset, underlying, minute_utc, summary.slot.ts)
         ]
@@ -544,7 +547,11 @@ def coverage(
     since: date | None,
     now: datetime,
 ) -> dict[str, Any]:
-    """Scheduled vs captured snapshots of one underlying (AC-W-04)."""
+    """Scheduled vs captured snapshots of one underlying (AC-W-04).
+
+    The hourly share is reported two ways, by owner decision: over whole days with any
+    snapshot, and over only the hours the host was up, which leaves out slots that never ran.
+    """
     captured = sorted(captured_labels(data_dir, storage.OPTION_QUOTES, underlying))
     times = [label_time(label) for label in captured]
     if not times:
@@ -557,6 +564,14 @@ def coverage(
     on_schedule = {t for t in times if t.minute == minute_utc}
     up_days = {t.date() for t in times}
     scheduled_up = [s for s in scheduled if s.date() in up_days]
+    host_down = {
+        label_time(gap["slot_utc"])
+        for gap in read_gaps(data_dir)
+        if gap["underlying"] == underlying
+        and gap["dataset"] == storage.OPTION_QUOTES
+        and gap["reason"] == NOT_CAPTURED
+    }
+    scheduled_host_up = [s for s in scheduled if s not in host_down]
 
     hour, minute = (int(part) for part in canonical_time_utc.split(":"))
     tolerance = timedelta(minutes=CANONICAL_TOLERANCE_MIN)
@@ -583,6 +598,12 @@ def coverage(
         "hourly_frac_on_up_days": (
             round(len(on_schedule & set(scheduled_up)) / len(scheduled_up), 4)
             if scheduled_up
+            else None
+        ),
+        "hourly_scheduled_host_up": len(scheduled_host_up),
+        "hourly_frac_host_up": (
+            round(len(on_schedule & set(scheduled_host_up)) / len(scheduled_host_up), 4)
+            if scheduled_host_up
             else None
         ),
         "canonical_days": canonical_days,
