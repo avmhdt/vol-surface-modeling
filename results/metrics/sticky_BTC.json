@@ -1,8 +1,21 @@
 {
-  "conclusion": "not enough consecutive daily surfaces (7)",
-  "end": "2026-11-10",
+  "conclusion": "neither: both slopes differ from zero",
+  "end": "2026-11-18",
+  "fixed_moneyness": {
+    "ci95_high": -0.2700245834620987,
+    "ci95_low": -0.4787624965998203,
+    "se": 0.053249467637173864,
+    "slope": -0.3743935400309595
+  },
+  "fixed_strike": {
+    "ci95_high": -0.0851553983384697,
+    "ci95_low": -0.24476534804884803,
+    "se": 0.04071682390570876,
+    "slope": -0.16496037319365886
+  },
+  "mean_skew_dsigma_dk": -0.3006766695515528,
   "min_pairs": 10,
-  "pairs": 7,
+  "pairs": 10,
   "start": "2026-11-02",
   "straddle_hedge_error_var": {
     "recorder_daily_entry_iv": null,

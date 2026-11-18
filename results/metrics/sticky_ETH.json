@@ -1,8 +1,21 @@
 {
-  "conclusion": "not enough consecutive daily surfaces (7)",
-  "end": "2026-11-10",
+  "conclusion": "sticky strike: fixed-strike IVs do not move with spot, fixed-moneyness IVs do",
+  "end": "2026-11-18",
+  "fixed_moneyness": {
+    "ci95_high": -0.12927805336753767,
+    "ci95_low": -0.5062998725195651,
+    "se": 0.09617903549796619,
+    "slope": -0.3177889629435514
+  },
+  "fixed_strike": {
+    "ci95_high": 0.03309542351020936,
+    "ci95_low": -0.4213255688317904,
+    "se": 0.11592372253622442,
+    "slope": -0.1941150726607905
+  },
+  "mean_skew_dsigma_dk": -0.21445310112397364,
   "min_pairs": 10,
-  "pairs": 7,
+  "pairs": 10,
   "start": "2026-11-02",
   "straddle_hedge_error_var": {
     "recorder_daily_entry_iv": null,

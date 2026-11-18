@@ -148,5 +148,14 @@ Owner and agent decisions for this repo. Owner entries are copied from the portf
 - **Two ETH months give no entry under the frozen design, so the next two months are fetched.** In 2020-09 and 2021-02, the ITM leg at every strike near the forward on the 24- and 25-day expiries was dropped as `wide_market`, with an IV spread over 10 vol points. That leaves no straddle with both legs clean, so ETH had 58 entries against 60. The design is not changed. As agreed when the months were planned, 2025-02 and 2025-03 are fetched instead.
 - **Sticky pairs are consecutive calendar dates.** The first version required exactly 24 hours between as-of times. As-of is the latest receive time, so real days never meet that, and it found 0 pairs among 7 recorder days.
 - **AC-H-02's counts and R^2 are met on 2026-11-10, and the premium is not recovered net of costs.** There are 62 BTC and 60 ETH monthly entries, with gamma R^2 of 0.861 and 0.965. Net P&L as a share of the forward is +0.022% for BTC, 95% CI [-0.90, 0.85], and -0.73% for ETH, [-1.94, 0.47]. Gross P&L is +0.55% and -0.13%. Both intervals include zero, and the memo says so plainly. The variance-swap rate exceeds realized variance by 0.070 for BTC (t 1.25) and 0.029 for ETH (t 0.40), over 62 months.
+- **AC-H-07 met on 2026-11-18, which closes the M5 exit.** M5's exit (AC-W-10, AC-H-02, AC-H-03, AC-H-07) is met. The study had its 10th pair of consecutive daily surfaces at 08:41 UTC. 11-02 to 11-10, 11-12, 11-16, 11-17 and 11-18 have canonical snapshots, and outages cost the days in between. The 30-day IV change against the forward's log return:
+
+  | | BTC | ETH |
+  |---|---|---|
+  | Fixed strike, slope [95% CI] | -0.16 [-0.24, -0.09] | -0.19 [-0.42, 0.03] |
+  | Fixed moneyness, slope [95% CI] | -0.37 [-0.48, -0.27] | -0.32 [-0.51, -0.13] |
+  | 30-day skew dsigma/dk | -0.30 | -0.21 |
+
+  ETH is sticky strike. BTC is neither. Its fixed-moneyness slope is close to its skew, as under sticky strike, but fixed-strike IVs also fell as spot rose, so vol and spot move against each other beyond what the skew alone explains. Ten pairs is a small sample, and these are 10 days of November 2026 only. In the straddle study the minimum-variance delta did not hedge better than Black-Scholes delta: the hedge-error variance is 3.6e-4 against 3.0e-4 for BTC and 2.4e-4 against 1.2e-4 for ETH. Its DVOL-based slope is an estimate from the year before each entry.
 - **AC-H-02's months are reported with their gap.** The monthly straddle metrics list every month without an entry between the first and the last, overall and by year, so 2025-02 to 2026-09 shows as missing. The owner confirmed this on 2026-11-03.
 
