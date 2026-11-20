@@ -291,6 +291,37 @@ class TardisConfig(BaseModel):
     max_ingest_p99_us: float = 1000.0
 
 
+class StabilityConfig(BaseModel):
+    """Temporal regularization (FR-14). ``lambda`` stays None until it is chosen and frozen."""
+
+    model_config = ConfigDict(extra="forbid", populate_by_name=True)
+
+    lam: float | None = Field(default=None, alias="lambda")
+    selection_days: int = 14
+    lambda_grid: list[float] = [0.0, 1.0e-5, 1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1]
+
+
+class ViewerConfig(BaseModel):
+    """The 3D surface viewer (FR-24, D-07)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    max_dates: int = 120
+    quote_dates: list[str] = []
+
+
+class ReproduceConfig(BaseModel):
+    """What ``vsm reproduce`` covers: the date range and the dates of the per-day studies."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    first_day: str = "2020-03-01"
+    dvol_start: str = "2021-04-01"
+    recorder_start: str = "2026-11-02"
+    barrier_dates: list[str] = ["2026-10-01", "2026-11-02"]
+    showcase_date: str = "2026-11-02"
+
+
 class ExportConfig(BaseModel):
     """Surface export contract."""
 
@@ -326,6 +357,9 @@ class AppConfig(BaseModel):
     vrp: VrpConfig = VrpConfig()
     straddle: StraddleConfig = StraddleConfig()
     tardis: TardisConfig = TardisConfig()
+    stability: StabilityConfig = StabilityConfig()
+    viewer: ViewerConfig = ViewerConfig()
+    reproduce: ReproduceConfig = ReproduceConfig()
     export: ExportConfig = ExportConfig()
 
     def results_dir(self) -> Path:

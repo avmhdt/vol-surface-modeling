@@ -163,11 +163,15 @@ def fit_raw_svi(
     enforce_butterfly: bool = True,
     lower_slice: RawSVI | None = None,
     grid: F64 | None = None,
+    prior: RawSVI | None = None,
+    lam: float = 0.0,
 ) -> SliceFit:
     """Weighted least squares in total variance under the no-arbitrage constraints.
 
     ``weights`` multiply squared total-variance errors. ``grid`` holds the log-moneyness points
-    where g and the calendar constraint apply.
+    where g and the calendar constraint apply. With ``prior`` and ``lam > 0`` a penalty
+    lam * sum((p - p_prev)^2) pulls the slice toward the previous day's slice of the same expiry
+    (FR-14), on the same scaled parameters the optimizer moves, so s_p = 1.
     """
     k = np.asarray(k, dtype=np.float64)
     target = np.asarray(w_target, dtype=np.float64)
@@ -186,9 +190,16 @@ def fit_raw_svi(
             sigma=float(x[4]),
         )
 
+    anchor = None
+    if prior is not None and lam > 0.0:
+        anchor = np.array([prior.a / scale, prior.b, prior.rho, prior.m, prior.sigma])
+
     def objective(x: F64) -> float:
         residual = (unpack(x).w(k) - target) / scale
-        return float(np.sum(weight * residual * residual))
+        cost = float(np.sum(weight * residual * residual))
+        if anchor is not None:
+            cost += lam * float(np.sum((x - anchor) ** 2))
+        return cost
 
     def floor(x: F64) -> F64:
         svi = unpack(x)
