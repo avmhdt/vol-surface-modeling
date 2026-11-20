@@ -83,6 +83,8 @@ def _best_fit(
     lower_quoted: F64 | None,
     grid_points: int,
     config: AppConfig,
+    prior: RawSVI | None = None,
+    lam: float = 0.0,
 ) -> SliceFit | None:
     """Best converged fit from the SSVI start and the quasi-explicit start.
 
@@ -103,9 +105,10 @@ def _best_fit(
             np.linspace(float(lower_quoted.min()), float(lower_quoted.max()), grid_points),
         ]
     grid = np.unique(np.concatenate(parts))
+    starts = (anchor, None) if prior is None or lam <= 0.0 else (prior, anchor, None)
     fits = [
-        fit_raw_svi(k, w, weight, init=start, lower_slice=lower, grid=grid)
-        for start in (anchor, None)
+        fit_raw_svi(k, w, weight, init=start, lower_slice=lower, grid=grid, prior=prior, lam=lam)
+        for start in starts
     ]
     converged = [fit for fit in fits if fit.converged]
     return min(converged, key=lambda fit: fit.rmse_w) if converged else None
@@ -117,6 +120,8 @@ def fit_slice_chain(
     lower: RawSVI | None,
     lower_quoted: F64 | None,
     config: AppConfig,
+    prior: RawSVI | None = None,
+    lam: float = 0.0,
 ) -> tuple[RawSVI, str] | None:
     """Run the fallback chain; returns (slice, source), or None if the slice is dropped."""
     cfg = config.arbitrage
@@ -127,11 +132,11 @@ def fit_slice_chain(
     def passes(candidate: RawSVI) -> bool:
         return check_slice(candidate, quoted, cfg, lower=lower, lower_quoted=lower_quoted).passed
 
-    fit = _best_fit(data, anchor, theta, lower, lower_quoted, FIRST_PASS_GRID, config)
+    fit = _best_fit(data, anchor, theta, lower, lower_quoted, FIRST_PASS_GRID, config, prior, lam)
     if fit is not None and passes(fit.svi):
         return fit.svi, "svi"
     if "constrained_refit" in cfg.fallback:
-        fit = _best_fit(data, anchor, theta, lower, lower_quoted, REFIT_GRID, config)
+        fit = _best_fit(data, anchor, theta, lower, lower_quoted, REFIT_GRID, config, prior, lam)
         if fit is not None and passes(fit.svi):
             return fit.svi, "svi_constrained"
     if "ssvi_slice" in cfg.fallback and passes(anchor):
@@ -147,13 +152,23 @@ def _spread_stats(rows: pl.DataFrame, model_iv: F64) -> tuple[int, float]:
 
 
 def build_slices(
-    quotes: pl.DataFrame, forwards: list[ForwardEstimate], config: AppConfig
+    quotes: pl.DataFrame,
+    forwards: list[ForwardEstimate],
+    config: AppConfig,
+    *,
+    prior_ssvi: SSVI | None = None,
+    prior_slices: dict[int, RawSVI] | None = None,
+    lam: float = 0.0,
 ) -> tuple[SSVI, tuple[SurfaceSlice, ...], tuple[int, ...], dict[str, int]] | None:
-    """Fit SSVI and every slice. None when there is nothing to fit or SSVI does not converge."""
+    """Fit SSVI and every slice. None when there is nothing to fit or SSVI does not converge.
+
+    ``prior_ssvi``, ``prior_slices`` (by expiry) and ``lam`` turn on FR-14's temporal penalty;
+    the defaults leave it off.
+    """
     groups = slice_data(quotes, config)
     if not groups:
         return None
-    fitted = fit_ssvi([data for _, data in groups])
+    fitted = fit_ssvi([data for _, data in groups], prior=prior_ssvi, lam=lam)
     if not fitted.converged:
         log.warning("ssvi_not_converged", message=fitted.message)
         return None
@@ -167,7 +182,8 @@ def build_slices(
     lower_quoted: F64 | None = None
     for rows, data in groups:
         expiry_ns = int(rows["expiry_ns"][0])
-        result = fit_slice_chain(data, ssvi, lower, lower_quoted, config)
+        prior = (prior_slices or {}).get(expiry_ns)
+        result = fit_slice_chain(data, ssvi, lower, lower_quoted, config, prior, lam)
         if result is None:
             dropped.append(expiry_ns)
             sources["dropped"] += 1

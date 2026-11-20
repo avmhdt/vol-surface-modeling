@@ -67,19 +67,13 @@ def within_spread_metrics(params: pl.DataFrame, underlying: str) -> dict[str, An
     n = rows["n_liquid"].cast(pl.Float64).to_numpy()
     svi = rows["within_spread_frac"].fill_null(0.0).fill_nan(0.0).to_numpy()
     ssvi = rows["ssvi_within_spread_frac"].fill_null(0.0).fill_nan(0.0).to_numpy()
-    daily = (
-        rows.with_columns(
-            pl.Series("inside", svi * n),
-            pl.Series("n", n),
-        )
-        .group_by("as_of_ns")
-        .agg(pl.col("inside").sum(), pl.col("n").sum())
-        .with_columns((pl.col("inside") / pl.col("n")).alias("frac"))
-        .sort("as_of_ns")
-    )
-    metrics["days"] = daily.height
+    # bincount adds in row order, so the daily sums are the same on every run (AC-W-08).
+    days, day_of_row = np.unique(rows["as_of_ns"].to_numpy(), return_inverse=True)
+    inside = np.bincount(day_of_row, weights=svi * n)
+    total = np.bincount(day_of_row, weights=n)
+    metrics["days"] = int(days.size)
     metrics["n_liquid"] = int(n.sum())
     metrics["pooled_svi"] = float(np.sum(svi * n) / np.sum(n))
     metrics["pooled_ssvi"] = float(np.sum(ssvi * n) / np.sum(n))
-    metrics["median_day_svi"] = float(daily["frac"].median())  # type: ignore[arg-type]
+    metrics["median_day_svi"] = float(np.median(inside / total))
     return metrics

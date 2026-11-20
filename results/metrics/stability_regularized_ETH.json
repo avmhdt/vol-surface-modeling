@@ -1,0 +1,83 @@
+{
+  "ac_h_01": {
+    "enough_days": false,
+    "jw_reduced_by_half": false,
+    "p95_abs_d_rho_ok": true,
+    "p95_rel_d_eta_ok": true,
+    "passed": false,
+    "recorder_days": 15,
+    "spread_drop_ok": true
+  },
+  "days": [
+    "20261102T0815Z",
+    "20261103T0815Z",
+    "20261104T0815Z",
+    "20261105T0815Z",
+    "20261106T0815Z",
+    "20261107T0815Z",
+    "20261108T0815Z",
+    "20261109T0815Z",
+    "20261110T0815Z",
+    "20261112T0815Z",
+    "20261116T0815Z",
+    "20261117T0815Z",
+    "20261118T0815Z",
+    "20261119T0815Z",
+    "20261120T0815Z"
+  ],
+  "jw_median_reduction": {
+    "jw_c": 0.058263716561199996,
+    "jw_p": 0.06085071357162186,
+    "jw_psi": -0.016672122651126164,
+    "jw_v": 0.013694584983235725,
+    "jw_vtilde": -0.0026735284288479377
+  },
+  "lambda": 1e-05,
+  "pooled_within_spread_drop": 0.0009410288582183401,
+  "regularized": {
+    "days": 15,
+    "jw_median_abs": {
+      "jw_c": 0.03083479699390468,
+      "jw_p": 0.030107608702269473,
+      "jw_psi": 0.006694829452922338,
+      "jw_v": 0.009437528281508623,
+      "jw_vtilde": 0.008430277768099625
+    },
+    "median_abs_d_gamma": 0.0,
+    "median_rel_d_theta_30d": 0.053725909070142824,
+    "p95_abs_d_rho": 0.028076241647403334,
+    "p95_rel_d_eta": 0.03780063699329046,
+    "within_spread": {
+      "days": 15,
+      "median_day_svi": 0.975609756097561,
+      "n_liquid": 3188,
+      "pooled_ssvi": 0.5755959849435383,
+      "pooled_svi": 0.9767879548306148,
+      "underlying": "ETH"
+    }
+  },
+  "regularized_gate_passed": 15,
+  "underlying": "ETH",
+  "unregularized": {
+    "days": 15,
+    "jw_median_abs": {
+      "jw_c": 0.03274249653131106,
+      "jw_p": 0.03205838426047247,
+      "jw_psi": 0.006585042811505994,
+      "jw_v": 0.009568565819288555,
+      "jw_vtilde": 0.008407799277706629
+    },
+    "median_abs_d_gamma": 0.0,
+    "median_rel_d_theta_30d": 0.053725985926154615,
+    "p95_abs_d_rho": 0.028079711875309867,
+    "p95_rel_d_eta": 0.03781196878305055,
+    "within_spread": {
+      "days": 15,
+      "median_day_svi": 0.9761904761904762,
+      "n_liquid": 3188,
+      "pooled_ssvi": 0.5755959849435383,
+      "pooled_svi": 0.9777289836888331,
+      "underlying": "ETH"
+    }
+  }
+}

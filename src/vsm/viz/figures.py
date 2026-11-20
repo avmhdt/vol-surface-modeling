@@ -1,5 +1,6 @@
 """Matplotlib report figures, written as static PNGs at 150 dpi."""
 
+import math
 from pathlib import Path
 
 import matplotlib
@@ -95,6 +96,147 @@ def model_fit_comparison(
         )
     ax.set_xlabel("IV RMSE, vol bp")
     ax.set_title(title, loc="left", color=INK, fontsize=11)
+    _save(fig, path)
+
+
+def smile_fits(panels: list[tuple[str, F64, F64, F64, F64, F64]], title: str, path: Path) -> None:
+    """One panel per expiry: quoted bid and ask IV against the fitted SVI slice.
+
+    Each panel is (label, k, bid_iv, ask_iv, k_grid, model_iv), with vols as fractions.
+    """
+    columns = 3
+    rows = max(1, math.ceil(len(panels) / columns))
+    fig, axes = plt.subplots(rows, columns, figsize=(9.6, 2.6 * rows), squeeze=False)
+    fig.patch.set_facecolor(SURFACE)
+    for ax, (label, k, bid, ask, grid, model) in zip(axes.ravel(), panels, strict=False):
+        _style(ax)
+        ax.vlines(k, 100.0 * bid, 100.0 * ask, color=MUTED, linewidth=1.2)
+        ax.plot(grid, 100.0 * model, color=BLUE, linewidth=2.0)
+        ax.set_title(label, loc="left", color=INK, fontsize=9)
+    for ax in axes.ravel()[len(panels) :]:
+        ax.set_visible(False)
+    fig.supxlabel("k = ln(K/F). Grey bars are bid to ask, blue is the SVI fit.", color=MUTED)
+    fig.supylabel("Implied vol, %", color=MUTED)
+    fig.suptitle(title, x=0.01, ha="left", color=INK, fontsize=11)
+    fig.tight_layout()
+    _save(fig, path)
+
+
+def g_and_density(k: F64, curves: list[tuple[str, F64, F64]], title: str, path: Path) -> None:
+    """Durrleman's g and the implied density of k, one line per slice."""
+    fig, (top, bottom) = plt.subplots(2, 1, figsize=(7.2, 6.0), sharex=True)
+    fig.patch.set_facecolor(SURFACE)
+    shades = plt.get_cmap("Blues")(np.linspace(0.35, 0.95, max(len(curves), 1)))
+    for (label, g, density), color in zip(curves, shades, strict=False):
+        top.plot(k, g, color=color, linewidth=1.5, label=label)
+        bottom.plot(k, density, color=color, linewidth=1.5)
+    for ax in (top, bottom):
+        _style(ax)
+        ax.axhline(0.0, color=MUTED, linewidth=0.8)
+    top.set_ylabel("g(k): no butterfly arbitrage where > 0")
+    bottom.set_ylabel("Density of k")
+    bottom.set_xlabel("Log-moneyness k = ln(K/F)")
+    top.legend(frameon=False, fontsize=7, labelcolor=MUTED, ncol=2)
+    top.set_title(title, loc="left", color=INK, fontsize=11)
+    _save(fig, path)
+
+
+def heatmap(k: F64, days: F64, values: F64, title: str, path: Path) -> None:
+    """A field over (k, days), such as local vol, in percent."""
+    fig, ax = plt.subplots(figsize=(7.2, 4.0))
+    fig.patch.set_facecolor(SURFACE)
+    _style(ax)
+    ax.grid(False)
+    mesh = ax.pcolormesh(k, days, 100.0 * values, cmap="Blues", shading="nearest")
+    bar = fig.colorbar(mesh, ax=ax)
+    bar.set_label("Local vol, %", color=MUTED)
+    ax.set_yscale("log")
+    ax.set_xlabel("Log-moneyness k = ln(K/F)")
+    ax.set_ylabel("Days")
+    ax.set_title(title, loc="left", color=INK, fontsize=11)
+    _save(fig, path)
+
+
+def barrier_bars(
+    labels: list[str], prices: dict[str, tuple[F64, F64]], title: str, path: Path
+) -> None:
+    """Knock-out prices by model, with 2 standard error whiskers."""
+    fig, ax = plt.subplots(figsize=(7.2, 4.0))
+    fig.patch.set_facecolor(SURFACE)
+    _style(ax)
+    width = 0.8 / max(len(prices), 1)
+    colors = (BLUE, ORANGE, MUTED)
+    positions = np.arange(len(labels))
+    for index, (name, (values, errors)) in enumerate(prices.items()):
+        ax.bar(
+            positions + index * width,
+            values,
+            width=width * 0.92,
+            yerr=2.0 * errors,
+            color=colors[index % len(colors)],
+            label=name,
+            error_kw={"ecolor": INK, "linewidth": 0.8},
+        )
+    ax.set_xticks(positions + width * (len(prices) - 1) / 2, labels, fontsize=8)
+    ax.set_ylabel("Price, USD per coin")
+    ax.legend(frameon=False, fontsize=8, labelcolor=MUTED)
+    ax.set_title(title, loc="left", color=INK, fontsize=11)
+    _save(fig, path)
+
+
+def vrp_series(years: F64, implied: F64, realized: F64, title: str, path: Path) -> None:
+    """Implied (DVOL squared) and realized 30-day variance by observation date."""
+    fig, ax = plt.subplots(figsize=(7.2, 4.0))
+    fig.patch.set_facecolor(SURFACE)
+    _style(ax)
+    ax.plot(years, implied, color=BLUE, linewidth=1.2, label="DVOL squared, 30-day implied")
+    ax.plot(years, realized, color=ORANGE, linewidth=1.2, label="Realized over the next 30 days")
+    ax.set_xlabel("Observation date")
+    ax.set_ylabel("Annualized variance")
+    ax.legend(frameon=False, fontsize=8, labelcolor=MUTED)
+    ax.set_title(title, loc="left", color=INK, fontsize=11)
+    _save(fig, path)
+
+
+def pnl_scatter(theory: F64, realized: F64, r2: float, title: str, path: Path) -> None:
+    """Each straddle's hedged P&L against its theoretical gamma P&L, as % of the forward."""
+    fig, ax = plt.subplots(figsize=(5.6, 5.0))
+    fig.patch.set_facecolor(SURFACE)
+    _style(ax)
+    ax.axhline(0.0, color=GRID, linewidth=0.8)
+    ax.axvline(0.0, color=GRID, linewidth=0.8)
+    ax.scatter(100.0 * theory, 100.0 * realized, s=22, color=BLUE, edgecolor=SURFACE)
+    span = 100.0 * float(np.max(np.abs(np.concatenate([theory, realized])))) * 1.05
+    ax.plot([-span, span], [-span, span], color=MUTED, linewidth=1.0, linestyle="--")
+    ax.set_xlabel("Theoretical gamma P&L, % of forward")
+    ax.set_ylabel("Hedged P&L before costs, % of forward")
+    ax.set_title(f"{title}, R^2 {r2:.2f}", loc="left", color=INK, fontsize=11)
+    _save(fig, path)
+
+
+def param_history(
+    plain_ns: F64,
+    plain: dict[str, F64],
+    regularized_ns: F64,
+    regularized: dict[str, F64],
+    title: str,
+    path: Path,
+) -> None:
+    """SSVI rho, eta and 30-day theta by day, unregularized and regularized."""
+    fig, axes = plt.subplots(3, 1, figsize=(7.2, 7.2), sharex=True)
+    fig.patch.set_facecolor(SURFACE)
+    days_plain = (plain_ns - plain_ns[0]) / 86_400e9
+    days_reg = (regularized_ns - plain_ns[0]) / 86_400e9
+    for ax, name in zip(axes, ("rho", "eta", "theta_30d"), strict=True):
+        _style(ax)
+        ax.plot(days_plain, plain[name], color=BLUE, linewidth=2, marker="o", markersize=3)
+        ax.plot(days_reg, regularized[name], color=ORANGE, linewidth=2, marker="o", markersize=3)
+        ax.set_ylabel(name, color=MUTED)
+    axes[0].plot([], [], color=BLUE, linewidth=2, label="Unregularized")
+    axes[0].plot([], [], color=ORANGE, linewidth=2, label="Regularized")
+    axes[0].legend(frameon=False, fontsize=8, labelcolor=MUTED)
+    axes[-1].set_xlabel("Days since the first recorder day")
+    axes[0].set_title(title, loc="left", color=INK, fontsize=11)
     _save(fig, path)
 
 

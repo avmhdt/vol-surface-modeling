@@ -1,0 +1,83 @@
+{
+  "ac_h_01": {
+    "enough_days": false,
+    "jw_reduced_by_half": false,
+    "p95_abs_d_rho_ok": true,
+    "p95_rel_d_eta_ok": true,
+    "passed": false,
+    "recorder_days": 15,
+    "spread_drop_ok": true
+  },
+  "days": [
+    "20261102T0815Z",
+    "20261103T0815Z",
+    "20261104T0815Z",
+    "20261105T0815Z",
+    "20261106T0815Z",
+    "20261107T0815Z",
+    "20261108T0815Z",
+    "20261109T0815Z",
+    "20261110T0815Z",
+    "20261112T0815Z",
+    "20261116T0815Z",
+    "20261117T0815Z",
+    "20261118T0815Z",
+    "20261119T0815Z",
+    "20261120T0815Z"
+  ],
+  "jw_median_reduction": {
+    "jw_c": -0.06034804811318706,
+    "jw_p": 0.035157144991106004,
+    "jw_psi": -0.003887052749998121,
+    "jw_v": -0.026347862642213782,
+    "jw_vtilde": -0.013776993449851949
+  },
+  "lambda": 1e-05,
+  "pooled_within_spread_drop": -0.0011920794054566253,
+  "regularized": {
+    "days": 15,
+    "jw_median_abs": {
+      "jw_c": 0.04431434728976963,
+      "jw_p": 0.054960816645454325,
+      "jw_psi": 0.012122611093442384,
+      "jw_v": 0.00678175646208154,
+      "jw_vtilde": 0.004712599448909893
+    },
+    "median_abs_d_gamma": 0.0,
+    "median_rel_d_theta_30d": 0.05915149286092093,
+    "p95_abs_d_rho": 0.04100650678392655,
+    "p95_rel_d_eta": 0.0574225479611583,
+    "within_spread": {
+      "days": 15,
+      "median_day_svi": 0.9647887323943662,
+      "n_liquid": 3912,
+      "pooled_ssvi": 0.5994376278118609,
+      "pooled_svi": 0.9621676891615542,
+      "underlying": "BTC"
+    }
+  },
+  "regularized_gate_passed": 15,
+  "underlying": "BTC",
+  "unregularized": {
+    "days": 15,
+    "jw_median_abs": {
+      "jw_c": 0.04179226563261357,
+      "jw_p": 0.05696349033433812,
+      "jw_psi": 0.012075672318150044,
+      "jw_v": 0.006607658776258074,
+      "jw_vtilde": 0.004648556318952418
+    },
+    "median_abs_d_gamma": 0.0,
+    "median_rel_d_theta_30d": 0.05915444688753041,
+    "p95_abs_d_rho": 0.04100788680657227,
+    "p95_rel_d_eta": 0.05744720238715235,
+    "within_spread": {
+      "days": 15,
+      "median_day_svi": 0.964,
+      "n_liquid": 3895,
+      "pooled_ssvi": 0.6,
+      "pooled_svi": 0.9609756097560975,
+      "underlying": "BTC"
+    }
+  }
+}

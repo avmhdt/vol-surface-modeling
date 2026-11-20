@@ -24,10 +24,13 @@ from vsm.localvol.runner import run_barrier_day, run_localvol_day
 from vsm.logs import configure_logging
 from vsm.models.runner import calibrate_heston_day, calibrate_sabr_day, refresh_comparison
 from vsm.pipeline import ALL_STEPS, export_day, recheck_day, refresh_outputs, run_day
+from vsm.reproduce import reproduce
 from vsm.settings import Settings
 from vsm.studies.sticky import run_sticky
 from vsm.studies.straddle import run_straddles
 from vsm.studies.vrp import run_vrp
+from vsm.surface.regularized import run_stability, select_lambda
+from vsm.viz.viewer import build_viewer
 
 app = typer.Typer(add_completion=False, no_args_is_help=True, help="Volatility surface pipeline.")
 ingest_app = typer.Typer(
@@ -375,6 +378,84 @@ def sticky(
     configure_logging(settings.log_level, as_json=settings.log_json)
     metrics = run_sticky(settings.data_dir, config, underlying, start, end)
     typer.echo(f"{underlying}: {metrics['pairs']} daily pairs; {metrics['conclusion']}")
+
+
+@app.command("reproduce")
+def reproduce_command(
+    underlying: Annotated[str, typer.Option("--underlying")] = "BTC,ETH",
+    skip_ingest: Annotated[
+        bool, typer.Option("--skip-ingest", help="Use local data only; download nothing.")
+    ] = False,
+    end: Annotated[str | None, typer.Option("--end", help="YYYY-MM-DD, default today.")] = None,
+    config_path: ConfigOption = None,
+) -> None:
+    """Regenerate every result, table, figure and the viewer from local data (FR-26)."""
+    settings = Settings()
+    config = load_config(config_path)
+    configure_logging(settings.log_level, as_json=settings.log_json)
+    if not skip_ingest:
+        # The Tardis files are not re-fetched: the keyless transfer limit allows about one
+        # batch a day. Recorder coverage is refreshed here, since it depends on the clock.
+        ingest_deribit_history()
+        ingest_instruments(expired=True)
+        status(since=config.reproduce.recorder_start)
+    last = date.fromisoformat(end) if end else None
+    summary = reproduce(settings.data_dir, config, _split(underlying), last)
+    typer.echo(json.dumps(summary, indent=2, sort_keys=True, default=str))
+
+
+@app.command()
+def viewer(
+    underlying: Annotated[str, typer.Option("--underlying")] = "BTC",
+    start: Annotated[str, typer.Option("--start", help="YYYY-MM-DD")] = "2020-03-01",
+    end: Annotated[str, typer.Option("--end", help="YYYY-MM-DD")] = "2099-12-31",
+    quotes_dates: Annotated[
+        str | None, typer.Option("--quotes-dates", help="At most 5 showcase dates.")
+    ] = None,
+    config_path: ConfigOption = None,
+) -> None:
+    """Static HTML 3D viewer of the surface history."""
+    settings = Settings()
+    config = load_config(config_path)
+    configure_logging(settings.log_level, as_json=settings.log_json)
+    dates = _split(quotes_dates) if quotes_dates is not None else None
+    for name in _split(underlying):
+        try:
+            path = build_viewer(settings.data_dir, config, name, start, end, dates)
+        except ValueError as exc:
+            typer.echo(str(exc))
+            raise typer.Exit(code=2) from exc
+        if path is None:
+            typer.echo(f"{name}: no exported surfaces in range")
+            raise typer.Exit(code=1)
+        typer.echo(f"{name}: {path} ({path.stat().st_size / 1e6:.1f} MB)")
+
+
+@app.command()
+def stability(
+    underlying: Annotated[str, typer.Option("--underlying")] = "BTC,ETH",
+    select: Annotated[
+        bool, typer.Option("--select", help="Choose lambda on the first recorder days.")
+    ] = False,
+    config_path: ConfigOption = None,
+) -> None:
+    """Temporal regularization: choose lambda once, or run AC-H-01 at the frozen lambda."""
+    settings = Settings()
+    config = load_config(config_path)
+    configure_logging(settings.log_level, as_json=settings.log_json)
+    try:
+        if select:
+            chosen = select_lambda(settings.data_dir, config)
+            typer.echo(
+                f"lambda {chosen['chosen_lambda']} chosen; freeze it as stability.lambda in config"
+            )
+            return
+        for name in _split(underlying):
+            checks = run_stability(settings.data_dir, config, name)["ac_h_01"]
+            typer.echo(f"{name}: {checks}")
+    except ValueError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(code=2) from exc
 
 
 def _days(start: str, end: str) -> list[date]:

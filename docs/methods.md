@@ -65,6 +65,14 @@ A short ATM-forward straddle per entry, delta-hedged daily with the perpetual, p
 
 Daily changes in the 30-day IV, at a fixed strike and at a fixed log-moneyness, are regressed on the 30-day forward's log return, with Newey-West intervals. A slope indistinguishable from zero at the fixed strike, with a negative one at fixed moneyness, means sticky strike. The reverse means sticky delta.
 
+## Stability
+
+Each recorder day can be refitted with the previous day's fit as start and prior, adding lambda times the squared change of the SSVI shape and of each slice's scaled raw SVI parameters (FR-14). Lambda is chosen once, on the first 14 recorder days, by holdout error: every other liquid strike of each expiry is left out of the fit and scored afterwards. `vsm stability` then compares the regularized and stored histories for AC-H-01. The stored surfaces are never replaced.
+
+## Viewer and reproduction
+
+`vsm viewer` writes one static Plotly page per underlying: the exported SSVI surface of each day over log-moneyness and days to expiry, a date slider, and quote mids on up to five showcase dates. `vsm reproduce` runs every step above in dependency order from the local store, then the viewer and the report figures. With `--skip-ingest` it downloads nothing, and two runs give identical files under `results/` apart from the experiment log and `bench/`.
+
 ## SABR
 
 SABR is Hagan's expansion per expiry with beta fixed at 1 (D-05). It fits one expiry at a time, so it does far better than Heston on these smiles, close to SVI on the first real day, but its slices have no arbitrage guarantee and no link across expiries. Beta 0.5 fit better on that day, 19 bp against 26 bp across slices, and the sensitivity table tracks this.

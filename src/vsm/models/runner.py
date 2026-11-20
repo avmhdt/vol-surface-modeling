@@ -368,33 +368,47 @@ def refresh_comparison(data_dir: Path, config: AppConfig, underlying: str) -> li
     return summary
 
 
+def _summary_by(
+    frame: pl.DataFrame, key: str, order: list[str], means: list[str], count: str
+) -> pl.DataFrame:
+    """Per-group means and maxima summed in a fixed row order.
+
+    Polars' parallel group_by does not fix the order in which a group's floats are added, so its
+    means can differ in the last bits from run to run (AC-W-08).
+    """
+    ordered = frame.sort(key, *order)
+    rows = []
+    for value in sorted(ordered[key].unique().to_list()):
+        part = ordered.filter(pl.col(key) == value)
+        row: dict[str, Any] = {key: value}
+        for column in means:
+            row[column] = float(np.mean(part[column].to_numpy().astype(np.float64)))
+        row["max_error_bp"] = float(np.max(part["max_error_bp"].to_numpy()))
+        row[count] = part.height
+        rows.append(row)
+    return pl.DataFrame(rows)
+
+
 def _sensitivity_tables(data_dir: Path, config: AppConfig, underlying: str) -> None:
     tables = config.results_dir() / "tables"
     sabr = _read(sabr_path(data_dir, underlying))
     if sabr is not None:
-        by_beta = (
-            sabr.group_by("beta")
-            .agg(
-                pl.col("rmse_iv_bp").mean(),
-                pl.col("within_spread_frac").mean(),
-                pl.col("max_error_bp").max(),
-                pl.len().alias("slices"),
-            )
-            .sort("beta")
+        by_beta = _summary_by(
+            sabr,
+            "beta",
+            ["snapshot_id", "expiry_ns"],
+            ["rmse_iv_bp", "within_spread_frac"],
+            "slices",
         )
         by_beta.write_csv(tables / f"sabr_beta_sensitivity_{underlying}.csv")
     heston = _read(heston_path(data_dir, underlying))
     if heston is not None:
-        by_variant = (
-            heston.group_by("variant")
-            .agg(
-                pl.col("rmse_iv_bp").mean(),
-                pl.col("within_spread_frac").mean(),
-                pl.col("max_error_bp").max(),
-                pl.col("n_quotes").mean(),
-                pl.len().alias("days"),
-            )
-            .sort("variant")
+        by_variant = _summary_by(
+            heston,
+            "variant",
+            ["snapshot_id"],
+            ["rmse_iv_bp", "within_spread_frac", "n_quotes"],
+            "days",
         )
         by_variant.write_csv(tables / f"heston_variants_{underlying}.csv")
 
